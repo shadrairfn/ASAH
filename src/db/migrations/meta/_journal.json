@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1764598191702,
+      "tag": "0000_lush_newton_destine",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1764613132608,
+      "tag": "0001_cheerful_deadpool",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1764613255184,
+      "tag": "0002_even_master_chief",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1764613620692,
+      "tag": "0003_silly_hemingway",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1764614439685,
+      "tag": "0004_puzzling_greymalkin",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1764614671577,
+      "tag": "0005_smiling_rumiko_fujikawa",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1764614757945,
+      "tag": "0006_wealthy_lionheart",
+      "breakpoints": true
+    }
+  ]
+}
