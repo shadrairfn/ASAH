@@ -1,0 +1,1 @@
+ALTER TABLE "careers" ADD COLUMN "industry_name" varchar(128);

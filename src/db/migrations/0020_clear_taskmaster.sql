@@ -1,0 +1,1 @@
+ALTER TABLE "psychotest_results" ALTER COLUMN "score" DROP NOT NULL;

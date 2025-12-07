@@ -1,0 +1,1 @@
+ALTER TABLE "psychotest_results" ADD CONSTRAINT "psychotest_results_id_user_unique" UNIQUE("id_user");

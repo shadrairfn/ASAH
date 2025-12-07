@@ -20,10 +20,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       email: emails[0].value,
       name: profile.displayName,
       image: photos[0].value,
-      refreshToken: refreshToken,
+      refresh_token: refreshToken,
       accessToken,
     };
-
+    
     done(null, user);
   }
 }

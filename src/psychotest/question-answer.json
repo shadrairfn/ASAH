@@ -1,0 +1,1380 @@
+{
+  "test_info": {
+    "title": "Comprehensive Assessment: Big Five Personality & General Aptitude",
+    "total_categories": 10,
+    "format": "JSON",
+    "version": "1.0"
+  },
+  "sections": {
+    "ocean_personality": {
+      "description": "Tes Kepribadian Big Five. Jawablah berdasarkan seberapa sesuai pernyataan dengan diri Anda.",
+      "scale": {
+        "1": "Sangat Tidak Setuju",
+        "2": "Tidak Setuju",
+        "3": "Netral",
+        "4": "Setuju",
+        "5": "Sangat Setuju"
+      },
+      "sub_sections": {
+        "openness": [
+          {
+            "id": "O_01",
+            "question": "Saya memiliki imajinasi yang sangat hidup dan aktif.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_02",
+            "question": "Saya tertarik pada ide-ide abstrak dan filosofis.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_03",
+            "question": "Saya suka mencoba hal-hal baru daripada melakukan rutinitas yang sama.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_04",
+            "question": "Saya sering meluangkan waktu untuk merenungkan keindahan alam atau seni.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_05",
+            "question": "Saya sulit memahami ide-ide yang bersifat abstrak atau teoretis.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "O_06",
+            "question": "Saya memiliki rasa ingin tahu yang besar tentang bagaimana dunia ini bekerja.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_07",
+            "question": "Saya lebih suka rutinitas yang pasti daripada kejutan atau perubahan.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "O_08",
+            "question": "Saya menikmati diskusi filosofis tentang makna kehidupan.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_09",
+            "question": "Saya sering merasa bosan jika melakukan hal yang sama berulang-ulang.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_10",
+            "question": "Saya tidak terlalu tertarik pada pameran seni atau pertunjukan budaya.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "O_11",
+            "question": "Saya suka memikirkan solusi kreatif untuk masalah yang rumit.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_12",
+            "question": "Saya sering hanyut dalam lamunan atau fantasi saya sendiri.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_13",
+            "question": "Saya cenderung berpegang teguh pada tradisi dan cara-cara konvensional.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "O_14",
+            "question": "Saya senang mempelajari kosakata baru atau bahasa asing.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_15",
+            "question": "Saya berani mencoba makanan yang belum pernah saya cicipi sebelumnya.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_16",
+            "question": "Saya merasa puisi dan sastra membosankan.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "O_17",
+            "question": "Saya sering melihat pola atau hubungan antar hal yang tidak dilihat orang lain.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_18",
+            "question": "Saya lebih suka bergaul dengan orang-orang yang memiliki pandangan berbeda dari saya.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "O_19",
+            "question": "Saya menghindari membaca bahan bacaan yang terlalu berat atau intelektual.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "O_20",
+            "question": "Saya antusias untuk mempelajari keterampilan baru, meskipun itu sulit.",
+            "type": "likert_scale"
+          }
+        ],
+        "conscientiousness": [
+          {
+            "id": "C_01",
+            "question": "Saya selalu menyelesaikan tugas-tugas saya tepat waktu.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_02",
+            "question": "Saya suka keteraturan dan menjaga barang-barang tetap pada tempatnya.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_03",
+            "question": "Saya bekerja keras untuk mencapai tujuan yang telah saya tetapkan.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_04",
+            "question": "Saya segera mengembalikan barang ke tempat semula setelah digunakan.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_05",
+            "question": "Saya sering menunda-nunda pekerjaan sampai batas waktu hampir habis.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "C_06",
+            "question": "Saya sangat memperhatikan detail kecil dalam pekerjaan saya.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_07",
+            "question": "Saya membuat daftar rencana kegiatan sebelum memulai hari.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_08",
+            "question": "Saya sering membiarkan kamar atau meja kerja saya berantakan.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "C_09",
+            "question": "Saya selalu datang tepat waktu saat memiliki janji.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_10",
+            "question": "Saya berpikir masak-masak sebelum mengambil keputusan.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_11",
+            "question": "Saya menyelesaikan apa yang sudah saya mulai.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_12",
+            "question": "Saya melakukan tugas-tugas dengan tergesa-gesa agar cepat selesai.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "C_13",
+            "question": "Saya selalu mempersiapkan segala sesuatu dari jauh-jauh hari.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_14",
+            "question": "Saya sering melupakan kewajiban atau tanggung jawab kecil.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "C_15",
+            "question": "Saya menuntut standar kualitas yang tinggi pada diri sendiri.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_16",
+            "question": "Saya merasa terganggu jika rencana saya berubah secara mendadak.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_17",
+            "question": "Saya bekerja dengan metode yang sistematis dan efisien.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_18",
+            "question": "Saya sering bertindak impulsif tanpa mempertimbangkan konsekuensinya.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "C_19",
+            "question": "Saya patuh terhadap aturan dan regulasi yang berlaku.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "C_20",
+            "question": "Saya dapat diandalkan untuk menyelesaikan tugas sulit.",
+            "type": "likert_scale"
+          }
+        ],
+        "extraversion": [
+          {
+            "id": "E_01",
+            "question": "Saya merasa nyaman berada di tengah keramaian atau pesta.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "E_02",
+            "question": "Saya suka memulai percakapan dengan orang yang baru saya kenal.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "E_03",
+            "question": "Saya cenderung diam di sekitar orang asing.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "E_04",
+            "question": "Saya suka menjadi pusat perhatian dalam sebuah kelompok.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "E_05",
+            "question": "Saya merasa sulit untuk mendekati orang lain dan berkenalan.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "E_06",
+            "question": "Saya merasa penuh energi dan semangat hampir sepanjang waktu.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "E_07",
+            "question": "Saya lebih suka menghabiskan waktu luang sendirian daripada pergi keluar.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "E_08",
+            "question": "Saya sering tertawa dan mudah mengekspresikan kegembiraan.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "E_09",
+            "question": "Saya tidak suka basa-basi atau obrolan ringan.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "E_10",
+            "question": "Saya memiliki banyak kenalan dan teman dari berbagai lingkungan.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "E_11",
+            "question": "Saya cenderung membiarkan orang lain yang memimpin atau mengambil keputusan.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "E_12",
+            "question": "Saya merasa antusias dan optimis menghadapi masa depan.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "E_13",
+            "question": "Saya merasa lelah jika harus bersosialisasi terlalu lama.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "E_14",
+            "question": "Saya suka mengambil peran sebagai pemimpin dalam kegiatan kelompok.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "E_15",
+            "question": "Saya adalah orang yang jarang berbicara (pendiam).",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "E_16",
+            "question": "Saya menikmati suasana yang ramai dan penuh aktivitas.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "E_17",
+            "question": "Saya lebih suka bekerja secara mandiri daripada dalam tim.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "E_18",
+            "question": "Saya tidak ragu untuk menyuarakan pendapat saya di depan umum.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "E_19",
+            "question": "Saya cenderung menghindari kerumunan orang banyak.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "E_20",
+            "question": "Saya suka mencari sensasi dan kegembiraan dalam hidup.",
+            "type": "likert_scale"
+          }
+        ],
+        "agreeableness": [
+          {
+            "id": "A_01",
+            "question": "Saya bersimpati dengan perasaan orang lain.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "A_02",
+            "question": "Saya jarang berdebat atau berselisih paham dengan orang lain.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "A_03",
+            "question": "Saya percaya bahwa sebagian besar orang memiliki niat baik.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "A_04",
+            "question": "Saya benar-benar tertarik dengan kehidupan dan masalah orang lain.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "A_05",
+            "question": "Saya tidak peduli dengan masalah orang lain.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "A_06",
+            "question": "Saya memiliki hati yang lembut dan mudah tersentuh.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "A_07",
+            "question": "Saya cenderung mencari kesalahan orang lain.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "A_08",
+            "question": "Saya meluangkan waktu untuk membantu orang lain yang membutuhkan.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "A_09",
+            "question": "Saya merasa sedikit kepedulian terhadap orang lain.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "A_10",
+            "question": "Saya membuat orang lain merasa nyaman dan diterima.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "A_11",
+            "question": "Saya menghina atau merendahkan orang lain.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "A_12",
+            "question": "Saya lebih suka bekerja sama (kooperatif) daripada berkompetisi.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "A_13",
+            "question": "Saya sulit memaafkan orang yang telah menyakiti saya.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "A_14",
+            "question": "Saya percaya pada kejujuran dan ketulusan orang lain.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "A_15",
+            "question": "Saya bersikap dingin dan tidak ramah.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "A_16",
+            "question": "Saya benci melihat orang lain menderita atau kesusahan.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "A_17",
+            "question": "Saya sering curiga terhadap motif tersembunyi orang lain.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "A_18",
+            "question": "Saya bersedia mengalah dalam perdebatan demi menjaga kedamaian.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "A_19",
+            "question": "Saya bersikap kasar atau tidak sopan kepada orang lain.",
+            "type": "likert_scale",
+            "scoring": "reverse"
+          },
+          {
+            "id": "A_20",
+            "question": "Saya memperlakukan semua orang dengan rasa hormat, siapa pun mereka.",
+            "type": "likert_scale"
+          }
+        ],
+        "neuroticism": [
+          {
+            "id": "N_01",
+            "question": "Saya sering merasa khawatir tentang hal-hal kecil.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_02",
+            "question": "Saya mudah merasa tertekan atau stres saat menghadapi masalah.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_03",
+            "question": "Suasana hati saya sering berubah-ubah dengan cepat.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_04",
+            "question": "Saya mudah merasa tersinggung oleh komentar orang lain.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_05",
+            "question": "Saya sering merasa sedih tanpa alasan yang jelas.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_06",
+            "question": "Saya merasa sulit untuk tetap tenang dalam situasi tegang atau darurat.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_07",
+            "question": "Saya sering meragukan kemampuan diri saya sendiri.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_08",
+            "question": "Saya takut melakukan kesalahan atau terlihat bodoh di depan orang lain.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_09",
+            "question": "Saya sering merasa seolah-olah sesuatu yang buruk akan segera terjadi.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_10",
+            "question": "Saya merasa emosi saya kadang meledak-ledak dan sulit dikontrol.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_11",
+            "question": "Saya sering merasa kesepian atau terisolasi.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_12",
+            "question": "Saya sulit tidur di malam hari karena terus memikirkan masalah.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_13",
+            "question": "Saya sering merasa tidak berdaya atau kewalahan menghadapi tuntutan hidup.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_14",
+            "question": "Saya sering merasa iri dengan keberuntungan orang lain.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_15",
+            "question": "Saya mudah merasa panik.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_16",
+            "question": "Saya sering merasa orang lain sedang menilai kekurangan saya.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_17",
+            "question": "Saya sering merasa putus asa ketika menghadapi kegagalan kecil.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_18",
+            "question": "Saya merasa cemas ketika rutinitas harian saya terganggu.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_19",
+            "question": "Saya sering merasa malu secara berlebihan dalam situasi sosial.",
+            "type": "likert_scale"
+          },
+          {
+            "id": "N_20",
+            "question": "Saya merasa sulit untuk melupakan kejadian memalukan di masa lalu.",
+            "type": "likert_scale"
+          }
+        ]
+      }
+    },
+    "aptitude_test": {
+      "description": "Tes Potensi Akademik/Bakat Skolastik. Pilih satu jawaban yang benar.",
+      "sub_sections": {
+        "numeric": [
+          {
+            "id": "NUM_01",
+            "question": "Lanjutkan deret angka berikut: 3, 6, 12, 24, ...",
+            "options": ["30", "36", "48", "60"],
+            "answer": "48",
+            "explanation": "Setiap angka dikalikan 2."
+          },
+          {
+            "id": "NUM_02",
+            "question": "Jika 15% dari X adalah 45, berapakah nilai X?",
+            "options": ["200", "300", "400", "450"],
+            "answer": "300",
+            "explanation": "0.15 * X = 45 -> X = 45 / 0.15 = 300."
+          },
+          {
+            "id": "NUM_03",
+            "question": "2/3 + 1/6 = ...",
+            "options": ["3/9", "4/6", "5/6", "1/2"],
+            "answer": "5/6",
+            "explanation": "Samakan penyebut menjadi 6. (4/6) + (1/6) = 5/6."
+          },
+          {
+            "id": "NUM_04",
+            "question": "Jika 4x - 5 = 15, berapakah nilai x?",
+            "options": ["4", "5", "6", "10"],
+            "answer": "5",
+            "explanation": "4x = 15 + 5 -> 4x = 20 -> x = 5."
+          },
+          {
+            "id": "NUM_05",
+            "question": "Berapakah rata-rata dari angka berikut: 5, 10, 15, 20, 25?",
+            "options": ["10", "15", "17.5", "20"],
+            "answer": "15",
+            "explanation": "Jumlah data (75) dibagi banyak data (5) = 15."
+          },
+          {
+            "id": "NUM_06",
+            "question": "Sebuah baju seharga Rp 100.000 didiskon 25%. Berapa harga yang harus dibayar?",
+            "options": ["Rp 25.000", "Rp 75.000", "Rp 80.000", "Rp 85.000"],
+            "answer": "Rp 75.000",
+            "explanation": "Diskon = 25.000. Harga akhir = 100.000 - 25.000 = 75.000."
+          },
+          {
+            "id": "NUM_07",
+            "question": "Lanjutkan seri angka berikut: 1, 4, 9, 16, 25, ...",
+            "options": ["30", "35", "36", "49"],
+            "answer": "36",
+            "explanation": "Pola bilangan kuadrat: 1^2, 2^2, 3^2, 4^2, 5^2, maka selanjutnya 6^2 = 36."
+          },
+          {
+            "id": "NUM_08",
+            "question": "Jarak kota A ke B adalah 180 km. Jika ditempuh dengan kecepatan 60 km/jam, berapa lama waktu tempuhnya?",
+            "options": ["2 jam", "3 jam", "3.5 jam", "4 jam"],
+            "answer": "3 jam",
+            "explanation": "Waktu = Jarak / Kecepatan = 180 / 60 = 3 jam."
+          },
+          {
+            "id": "NUM_09",
+            "question": "Berapakah nilai dari akar kuadrat 144 ditambah akar kuadrat 25?",
+            "options": ["13", "15", "17", "19"],
+            "answer": "17",
+            "explanation": "12 + 5 = 17."
+          },
+          {
+            "id": "NUM_10",
+            "question": "Perbandingan uang Andi dan Budi adalah 2 : 3. Jika jumlah uang mereka Rp 50.000, berapa uang Andi?",
+            "options": ["Rp 10.000", "Rp 20.000", "Rp 30.000", "Rp 40.000"],
+            "answer": "Rp 20.000",
+            "explanation": "Andi = (2/5) * 50.000 = 20.000."
+          },
+          {
+            "id": "NUM_11",
+            "question": "0,25 + 1,5 x 2 = ...",
+            "options": ["3,5", "3,25", "4,25", "2,75"],
+            "answer": "3,25",
+            "explanation": "Perkalian didahulukan: 1,5 x 2 = 3. Lalu 0,25 + 3 = 3,25."
+          },
+          {
+            "id": "NUM_12",
+            "question": "Jika 1 lusin pensil harganya Rp 24.000, berapakah harga 5 buah pensil?",
+            "options": ["Rp 8.000", "Rp 10.000", "Rp 12.000", "Rp 15.000"],
+            "answer": "Rp 10.000",
+            "explanation": "Harga satuan = 24.000 / 12 = 2.000. Harga 5 buah = 5 x 2.000 = 10.000."
+          },
+          {
+            "id": "NUM_13",
+            "question": "Pilih bilangan yang nilainya paling besar.",
+            "options": ["1/3", "0.30", "30%", "2/5"],
+            "answer": "2/5",
+            "explanation": "1/3=0.33, 0.30=0.30, 30%=0.30, 2/5=0.40. Terbesar adalah 0.40."
+          },
+          {
+            "id": "NUM_14",
+            "question": "Sebuah persegi panjang memiliki panjang 10 cm dan lebar 6 cm. Berapakah kelilingnya?",
+            "options": ["16 cm", "32 cm", "60 cm", "64 cm"],
+            "answer": "32 cm",
+            "explanation": "Keliling = 2 x (Panjang + Lebar) = 2 x (16) = 32."
+          },
+          {
+            "id": "NUM_15",
+            "question": "Lanjutkan pola: 100, 95, 85, 70, ...",
+            "options": ["45", "50", "55", "60"],
+            "answer": "50",
+            "explanation": "Pengurangan bertingkat: -5, -10, -15. Selanjutnya -20. 70 - 20 = 50."
+          },
+          {
+            "id": "NUM_16",
+            "question": "Jika a = 4 dan b = 3, berapakah nilai dari a² + 2ab + b²?",
+            "options": ["25", "36", "49", "64"],
+            "answer": "49",
+            "explanation": "(a+b)² = (4+3)² = 7² = 49."
+          },
+          {
+            "id": "NUM_17",
+            "question": "Berapakah hasil dari 2/5 dibagi 1/2?",
+            "options": ["1/5", "2/10", "4/5", "5/4"],
+            "answer": "4/5",
+            "explanation": "(2/5) x (2/1) = 4/5."
+          },
+          {
+            "id": "NUM_18",
+            "question": "Sebuah pekerjaan dapat diselesaikan oleh A dalam 6 jam. Jika A dan B bekerja bersama, selesai dalam 4 jam. Berapa lama B mengerjakannya sendirian?",
+            "options": ["8 jam", "10 jam", "12 jam", "14 jam"],
+            "answer": "12 jam",
+            "explanation": "1/Total = 1/A + 1/B -> 1/4 = 1/6 + 1/B -> 1/B = 3/12 - 2/12 = 1/12. B = 12 jam."
+          },
+          {
+            "id": "NUM_19",
+            "question": "Angka romawi untuk 49 adalah...",
+            "options": ["IL", "XLIX", "XXXXIX", "LIX"],
+            "answer": "XLIX",
+            "explanation": "40 = XL, 9 = IX. Gabungan = XLIX."
+          },
+          {
+            "id": "NUM_20",
+            "question": "Dalam sebuah kelas, rasio pria dan wanita adalah 3:5. Jika ada 15 pria, berapa jumlah wanita?",
+            "options": ["20", "25", "30", "35"],
+            "answer": "25",
+            "explanation": "3 bagian = 15 orang -> 1 bagian = 5 orang. Wanita = 5 bagian x 5 orang = 25 orang."
+          }
+        ],
+        "spatial": [
+          {
+            "id": "SPA_01",
+            "question": "Jika sebuah dadu diputar 180 derajat secara horizontal, sisi depan yang tadinya angka 1 akan menjadi...",
+            "options": [
+              "Tetap 1",
+              "Angka 6 (Belakang)",
+              "Angka 3 (Kanan)",
+              "Angka 4 (Kiri)"
+            ],
+            "answer": "Angka 6 (Belakang)",
+            "explanation": "Rotasi 180 derajat memindahkan sisi depan ke belakang."
+          },
+          {
+            "id": "SPA_02",
+            "question": "Manakah bentuk 2D yang dapat dilipat menjadi kubus sempurna?",
+            "options": [
+              "Pola T",
+              "Pola Lingkaran",
+              "Pola Segitiga",
+              "Pola Garis Lurus 6 kotak"
+            ],
+            "answer": "Pola T",
+            "explanation": "Pola T (4 kotak vertikal, 1 kiri, 1 kanan) adalah jaring-jaring kubus yang valid."
+          },
+          {
+            "id": "SPA_03",
+            "question": "Bayangkan jarum jam di angka 12. Jika diputar 90 derajat searah jarum jam, jarum menunjuk angka...",
+            "options": ["2", "3", "6", "9"],
+            "answer": "3",
+            "explanation": "90 derajat searah jarum jam dari 12 adalah 3."
+          },
+          {
+            "id": "SPA_04",
+            "question": "Andi menghadap ke Utara. Ia berputar 90 derajat ke kanan, kemudian berputar 180 derajat ke kiri. Ke arah mana Andi menghadap sekarang?",
+            "options": ["Utara", "Timur", "Barat", "Selatan"],
+            "answer": "Barat",
+            "explanation": "Utara + 90 kanan = Timur. Timur + 180 kiri (balik arah) = Barat."
+          },
+          {
+            "id": "SPA_05",
+            "question": "Manakah huruf kapital berikut yang bentuknya TIDAK akan berubah jika dilihat melalui cermin datar?",
+            "options": ["R", "L", "M", "S"],
+            "answer": "M",
+            "explanation": "Huruf M memiliki simetri lipat vertikal, sehingga bayangan cerminnya tetap sama."
+          },
+          {
+            "id": "SPA_06",
+            "question": "Jika Roda Gigi A berputar searah jarum jam dan bersinggungan langsung dengan Roda Gigi B, ke arah mana Roda Gigi B berputar?",
+            "options": [
+              "Searah jarum jam",
+              "Berlawanan arah jarum jam",
+              "Diam",
+              "Tegak lurus"
+            ],
+            "answer": "Berlawanan arah jarum jam",
+            "explanation": "Dua roda gigi yang bersinggungan langsung akan berputar dengan arah yang saling berlawanan."
+          },
+          {
+            "id": "SPA_07",
+            "question": "Sebuah kubus 3x3x3 dicat seluruh bagian luarnya dengan warna merah. Kubus tersebut kemudian dipotong-potong menjadi 27 kubus kecil (1x1x1). Berapa banyak kubus kecil yang TIDAK terkena cat sama sekali?",
+            "options": ["0", "1", "3", "9"],
+            "answer": "1",
+            "explanation": "Hanya kubus yang berada tepat di tengah (inti) yang tidak memiliki sisi luar."
+          },
+          {
+            "id": "SPA_08",
+            "question": "Jika selembar kertas berbentuk persegi dilipat dua kali menjadi segitiga kecil, lalu bagian tengahnya dilubangi, bagaimana pola lubang saat kertas dibuka kembali?",
+            "options": [
+              "1 lubang di tengah",
+              "2 lubang di pinggir",
+              "4 lubang simetris",
+              "Tidak ada lubang"
+            ],
+            "answer": "4 lubang simetris",
+            "explanation": "Lipatan dua kali membagi kertas menjadi 4 lapisan. Melubangi tumpukan itu akan menghasilkan 4 lubang saat dibuka."
+          },
+          {
+            "id": "SPA_09",
+            "question": "Bayangkan sebuah dadu standar. Jika sisi atas adalah 2, sisi manakah yang berada di bawah (opposite)?",
+            "options": ["3", "4", "5", "6"],
+            "answer": "5",
+            "explanation": "Pada dadu standar, jumlah sisi yang berlawanan selalu 7. Jadi, 7 - 2 = 5."
+          },
+          {
+            "id": "SPA_10",
+            "question": "Bentuk apakah yang dihasilkan jika sebuah tabung (silinder) dibelah tepat di tengah secara vertikal dari atas ke bawah?",
+            "options": ["Lingkaran", "Persegi Panjang", "Elips", "Segitiga"],
+            "answer": "Persegi Panjang",
+            "explanation": "Penampang melintang vertikal dari sebuah tabung adalah persegi panjang."
+          },
+          {
+            "id": "SPA_11",
+            "question": "Bayangkan huruf 'b'. Jika huruf ini diputar 180 derajat, huruf apakah yang akan terlihat?",
+            "options": ["d", "p", "q", "g"],
+            "answer": "q",
+            "explanation": "Memutar 'b' 180 derajat akan menghasilkan bentuk seperti huruf 'q'."
+          },
+          {
+            "id": "SPA_12",
+            "question": "Seseorang berjalan 3 meter ke Utara, lalu 4 meter ke Timur. Berapa jarak garis lurus dari titik awal ke titik akhir?",
+            "options": ["5 meter", "7 meter", "6 meter", "12 meter"],
+            "answer": "5 meter",
+            "explanation": "Menggunakan teorema Pythagoras (3-4-5). Akar dari (3^2 + 4^2) = Akar 25 = 5."
+          },
+          {
+            "id": "SPA_13",
+            "question": "Jika kamu melipat jaring-jaring berbentuk huruf 'T' yang terdiri dari 6 persegi, bangun ruang apa yang akan terbentuk?",
+            "options": ["Limas Segiempat", "Balok", "Kubus", "Prisma Segitiga"],
+            "answer": "Kubus",
+            "explanation": "Pola T adalah salah satu jaring-jaring standar untuk membentuk kubus."
+          },
+          {
+            "id": "SPA_14",
+            "question": "Manakah dari objek berikut yang bayangannya TIDAK MUNGKIN berbentuk persegi panjang?",
+            "options": ["Buku", "Bola", "Kotak Sepatu", "Kaleng Minuman"],
+            "answer": "Bola",
+            "explanation": "Bayangan bola akan selalu berbentuk lingkaran atau elips (tergantung sudut cahaya), tidak pernah persegi bersudut."
+          },
+          {
+            "id": "SPA_15",
+            "question": "Sebuah gelas berisi air setengah penuh dimiringkan 45 derajat. Bagaimana posisi permukaan air?",
+            "options": [
+              "Miring mengikuti gelas",
+              "Tetap mendatar (horizontal)",
+              "Tegak lurus gelas",
+              "Cembung"
+            ],
+            "answer": "Tetap mendatar (horizontal)",
+            "explanation": "Karena gravitasi, permukaan air yang tenang selalu horizontal (datar) tidak peduli kemiringan wadahnya."
+          },
+          {
+            "id": "SPA_16",
+            "question": "Jika kamu berdiri menghadap cermin sambil memegang pulpen di tangan Kanan, bayangan di cermin akan memegang pulpen di tangan...",
+            "options": ["Kanan", "Kiri", "Kedua tangan", "Tidak memegang"],
+            "answer": "Kiri",
+            "explanation": "Cermin membalikkan sisi kiri dan kanan (inversi lateral). Tangan kananmu menjadi tangan kiri bayanganmu."
+          },
+          {
+            "id": "SPA_17",
+            "question": "Berapa banyak sisi datar yang dimiliki oleh sebuah bola?",
+            "options": ["1", "0", "2", "Tak terhingga"],
+            "answer": "0",
+            "explanation": "Bola adalah bangun ruang sisi lengkung sempurna, tidak memiliki sisi datar (bidang)."
+          },
+          {
+            "id": "SPA_18",
+            "question": "Dari pandangan atas (bird's eye view), bentuk piramida mesir terlihat seperti...",
+            "options": [
+              "Segitiga",
+              "Persegi dengan silang di tengah",
+              "Lingkaran",
+              "Trapesium"
+            ],
+            "answer": "Persegi dengan silang di tengah",
+            "explanation": "Dasar piramida adalah persegi, dan rusuk-rusuk tegaknya bertemu di satu titik tengah, membentuk silang diagonal."
+          },
+          {
+            "id": "SPA_19",
+            "question": "Jika sebuah kertas berbentuk persegi panjang dilipat menyatukan sisi pendeknya, lalu dilipat lagi menyatukan sisi pendek barunya, berapa lapis kertas yang terbentuk?",
+            "options": ["2", "3", "4", "6"],
+            "answer": "4",
+            "explanation": "Lipatan pertama = 2 lapis. Lipatan kedua melipat 2 lapis itu menjadi dua lagi = 4 lapis."
+          },
+          {
+            "id": "SPA_20",
+            "question": "Mana yang merupakan hasil rotasi 90 derajat searah jarum jam dari angka '3'?",
+            "options": ["Huruf m", "Huruf w", "Angka 3 terbalik", "Huruf E"],
+            "answer": "Huruf m",
+            "explanation": "Jika angka 3 diputar 90 derajat ke kanan, lengkungannya menghadap ke bawah, menyerupai huruf 'm' atau 'w' (tergantung font, tapi 'm' paling mendekati orientasi kaki di bawah)."
+          }
+        ],
+        "perceptual": [
+          {
+            "id": "PER_01",
+            "question": "Carilah pasangan kode yang TIDAK identik.",
+            "options": [
+              "A892kkL - A892kkL",
+              "Bj778Mq - Bj778Mq",
+              "Xx909PL - Xx909Pl",
+              "Mm12345 - Mm12345"
+            ],
+            "answer": "Xx909PL - Xx909Pl",
+            "explanation": "Perbedaan huruf besar 'L' dan kecil 'l' di akhir."
+          },
+          {
+            "id": "PER_02",
+            "question": "Hitung jumlah huruf 'a' dalam kalimat: 'Ayah makan ayam'.",
+            "options": ["4", "5", "6", "7"],
+            "answer": "6",
+            "explanation": "A-y-a-h (2), m-a-k-a-n (2), a-y-a-m (2). Total 6."
+          },
+          {
+            "id": "PER_03",
+            "question": "Manakah tulisan yang sama persis dengan: '88923-XK-01'?",
+            "options": [
+              "88923-XK-01",
+              "88932-XK-01",
+              "88923-XK-O1",
+              "88923-XK-10"
+            ],
+            "answer": "88923-XK-01",
+            "explanation": "Opsi lain memiliki kesalahan urutan angka atau huruf O menggantikan 0."
+          },
+          {
+            "id": "PER_04",
+            "question": "Manakah kode yang SAMA PERSIS dengan: 'XJ-990-Kw2'?",
+            "options": ["XJ-990-KW2", "XJ-990-Kw2", "XJ-909-Kw2", "XJ-990-kw2"],
+            "answer": "XJ-990-Kw2",
+            "explanation": "Perhatikan huruf besar 'K' dan kecil 'w'."
+          },
+          {
+            "id": "PER_05",
+            "question": "Hitung jumlah huruf 's' (besar maupun kecil) dalam kalimat: 'Susi sedang menyusun sosis'.",
+            "options": ["5", "6", "7", "8"],
+            "answer": "7",
+            "explanation": "S-u-s-i (2), s-e-d-a-n-g (1), m-e-n-y-u-s-u-n (1), s-o-s-i-s (3). Total 7."
+          },
+          {
+            "id": "PER_06",
+            "question": "Manakah pasangan nama yang TIDAK identik?",
+            "options": [
+              "Ahmad Fauzi - Ahmad Fauzi",
+              "Siti Aminah - Siti Aminah",
+              "Budi Santoso - Budi Sentoso",
+              "Rina Wati - Rina Wati"
+            ],
+            "answer": "Budi Santoso - Budi Sentoso",
+            "explanation": "Perbedaan huruf 'a' dan 'e' pada nama belakang (Santoso vs Sentoso)."
+          },
+          {
+            "id": "PER_07",
+            "question": "Jika urutan '12345' dibalik menjadi '54321', manakah hasil pembalikan dari 'K0P1-SU5U'?",
+            "options": ["U5US-1P0K", "US5U-1P0K", "U5US-1POK", "U5US-IP0K"],
+            "answer": "U5US-1P0K",
+            "explanation": "Pembalikan karakter per karakter dari belakang ke depan."
+          },
+          {
+            "id": "PER_08",
+            "question": "Carilah angka '8' yang tersembunyi di antara huruf 'B': 'BBBBBB8BBBB'",
+            "options": [
+              "Urutan ke-5",
+              "Urutan ke-6",
+              "Urutan ke-7",
+              "Urutan ke-8"
+            ],
+            "answer": "Urutan ke-7",
+            "explanation": "B(1)B(2)B(3)B(4)B(5)B(6)8(7)."
+          },
+          {
+            "id": "PER_09",
+            "question": "Manakah alamat email yang penulisannya benar dan identik dengan 'admin@perusahaan.co.id'?",
+            "options": [
+              "admin@perusahaan.com.id",
+              "admin@perusahan.co.id",
+              "admin@perusahaan.co.id",
+              "adimin@perusahaan.co.id"
+            ],
+            "answer": "admin@perusahaan.co.id",
+            "explanation": "Opsi lain memiliki kesalahan: .com.id, perusahan (kurang a), adimin (lebihan i)."
+          },
+          {
+            "id": "PER_10",
+            "question": "Perhatikan deretan simbol ini: # $ % & # $ % &. Simbol apa yang seharusnya muncul berikutnya?",
+            "options": ["#", "$", "%", "&"],
+            "answer": "#",
+            "explanation": "Pola berulang 4 simbol: # $ % &. Setelah & kembali ke #."
+          },
+          {
+            "id": "PER_11",
+            "question": "Manakah plat nomor yang berbeda format spasinya?",
+            "options": ["B 1234 CD", "B 5678 EF", "B 9012 GH", "B1345 IJ"],
+            "answer": "B1345 IJ",
+            "explanation": "Opsi terakhir tidak memiliki spasi setelah kode wilayah (B)."
+          },
+          {
+            "id": "PER_12",
+            "question": "Berapa banyak angka '0' dalam deretan: 200202000?",
+            "options": ["4", "5", "6", "7"],
+            "answer": "6",
+            "explanation": "2(0)(0)2(0)2(0)(0)(0). Total 6."
+          },
+          {
+            "id": "PER_13",
+            "question": "Manakah pasangan kata yang memiliki ejaan yang SAMA?",
+            "options": [
+              "Kualitas - Kwalitas",
+              "Jadwal - Jadual",
+              "Apotek - Apotik",
+              "Sistem - Sistem"
+            ],
+            "answer": "Sistem - Sistem",
+            "explanation": "Pasangan lainnya adalah kata baku vs tidak baku atau berbeda ejaan."
+          },
+          {
+            "id": "PER_14",
+            "question": "Cocokkan kode inventaris: 'INV-2024/XM-09'.",
+            "options": [
+              "INV-2024/XM-09",
+              "INV-2024/XM-O9",
+              "INV-2024/XM-009",
+              "INV-2024/XN-09"
+            ],
+            "answer": "INV-2024/XM-09",
+            "explanation": "Opsi B menggunakan huruf O, opsi C kelebihan angka, opsi D salah huruf N."
+          },
+          {
+            "id": "PER_15",
+            "question": "Manakah pecahan mata uang yang ditulis dengan format Rupiah standar yang benar?",
+            "options": ["Rp. 50000", "Rp 50.000,00", "Rp50.000,-", "50.000 Rp"],
+            "answer": "Rp 50.000,00",
+            "explanation": "Format baku dengan spasi setelah simbol, pemisah ribuan titik, dan desimal koma."
+          },
+          {
+            "id": "PER_16",
+            "question": "Identifikasi simbol yang berbeda dalam baris ini: @ @ @ © @ @",
+            "options": ["Urutan 1", "Urutan 3", "Urutan 4", "Urutan 6"],
+            "answer": "Urutan 4",
+            "explanation": "Simbol © berbeda dari simbol @."
+          },
+          {
+            "id": "PER_17",
+            "question": "Mana yang merupakan penulisan tanggal yang identik dengan '05-12-2023'?",
+            "options": ["05/12/2023", "05-12-2023", "5-12-2023", "05-12-23"],
+            "answer": "05-12-2023",
+            "explanation": "Harus sama persis format pemisahnya (tanda hubung) dan digit tahunnya."
+          },
+          {
+            "id": "PER_18",
+            "question": "Cari kelompok huruf yang tidak memiliki huruf vokal (a, i, u, e, o).",
+            "options": ["BRTHD", "KLPMR", "STYGA", "MNBVC"],
+            "answer": "MNBVC",
+            "explanation": "STYGA memiliki 'A' (kadang Y dianggap vokal/konsonan, tapi MNBVC jelas tidak ada vokal sama sekali)."
+          },
+          {
+            "id": "PER_19",
+            "question": "Manakah pasangan angka yang nilainya berbeda?",
+            "options": ["1.50 - 1.5", "007 - 7", "10.00 - 10", "1,000 - 1.000"],
+            "answer": "1,000 - 1.000",
+            "explanation": "Dalam format Indonesia, 1,000 adalah satu (desimal), sedangkan 1.000 adalah seribu."
+          },
+          {
+            "id": "PER_20",
+            "question": "Hitung berapa kali angka '3' muncul setelah angka '2' dalam deret: 123423523",
+            "options": ["1 kali", "2 kali", "3 kali", "4 kali"],
+            "answer": "3 kali",
+            "explanation": "1(23)4(23)5(23). Pola '23' muncul 3 kali."
+          }
+        ],
+        "abstract": [
+          {
+            "id": "ABS_01",
+            "question": "Semua A adalah B. Semua B adalah C. Kesimpulannya?",
+            "options": [
+              "Semua C adalah A",
+              "Semua A adalah C",
+              "Sebagian C bukan B",
+              "Tidak ada hubungan"
+            ],
+            "answer": "Semua A adalah C",
+            "explanation": "Logika Silogisme."
+          },
+          {
+            "id": "ABS_02",
+            "question": "Mana yang tidak masuk kelompoknya?",
+            "options": ["Segitiga", "Persegi", "Lingkaran", "Kubus"],
+            "answer": "Kubus",
+            "explanation": "Kubus adalah 3D, sisanya bangun datar 2D."
+          },
+          {
+            "id": "ABS_03",
+            "question": "Pagi : Sarapan = Malam : ...",
+            "options": ["Tidur", "Makan Malam", "Gelap", "Bintang"],
+            "answer": "Makan Malam",
+            "explanation": "Hubungan waktu makan."
+          },
+          {
+            "id": "ABS_04",
+            "question": "Lanjutkan pola huruf berikut: A, C, E, G, ...",
+            "options": ["H", "I", "J", "K"],
+            "answer": "I",
+            "explanation": "Pola melompat satu huruf (A-b-C-d-E-f-G-h-I)."
+          },
+          {
+            "id": "ABS_05",
+            "question": "Mana yang tidak masuk dalam kelompoknya?",
+            "options": ["Mobil", "Bus", "Kereta Api", "Pesawat Terbang"],
+            "answer": "Pesawat Terbang",
+            "explanation": "Pesawat adalah transportasi udara, sisanya transportasi darat."
+          },
+          {
+            "id": "ABS_06",
+            "question": "Jika 'Lingkaran' berhubungan dengan 'Bola', maka 'Persegi' berhubungan dengan...",
+            "options": ["Balok", "Kubus", "Prisma", "Tabung"],
+            "answer": "Kubus",
+            "explanation": "Hubungan bentuk 2D dengan bentuk 3D-nya yang memiliki sisi sama panjang."
+          },
+          {
+            "id": "ABS_07",
+            "question": "Semua Angsa berwarna putih. Doni punya hewan yang bukan berwarna putih. Kesimpulannya...",
+            "options": [
+              "Hewan Doni pasti Angsa",
+              "Hewan Doni bukan Angsa",
+              "Sebagian Angsa berwarna hitam",
+              "Tidak ada kesimpulan"
+            ],
+            "answer": "Hewan Doni bukan Angsa",
+            "explanation": "Modus Tollens: Jika P maka Q. Bukan Q, maka Bukan P."
+          },
+          {
+            "id": "ABS_08",
+            "question": "Gelap : Cahaya = Lapar : ...",
+            "options": ["Haus", "Makanan", "Kenyang", "Piring"],
+            "answer": "Makanan",
+            "explanation": "Gelap hilang jika ada cahaya, lapar hilang jika ada makanan (Solusi dari kondisi)."
+          },
+          {
+            "id": "ABS_09",
+            "question": "Pola rotasi: Panah Atas, Panah Kanan, Panah Bawah, ...",
+            "options": [
+              "Panah Atas",
+              "Panah Kiri",
+              "Panah Kanan",
+              "Panah Miring"
+            ],
+            "answer": "Panah Kiri",
+            "explanation": "Rotasi 90 derajat searah jarum jam."
+          },
+          {
+            "id": "ABS_10",
+            "question": "Mana yang ganjil (odd one out)?",
+            "options": ["Venus", "Mars", "Bulan", "Jupiter"],
+            "answer": "Bulan",
+            "explanation": "Bulan adalah satelit, sedangkan yang lain adalah planet."
+          },
+          {
+            "id": "ABS_11",
+            "question": "Jika kertas dilipat dua kali menjadi 4 bagian, lalu bagian tengah digunting berbentuk lingkaran. Saat dibuka, ada berapa lubang?",
+            "options": ["1", "2", "3", "4"],
+            "answer": "4",
+            "explanation": "Lipatan membagi kertas menjadi 4 lapisan tumpuk, satu guntingan menembus keempatnya."
+          },
+          {
+            "id": "ABS_12",
+            "question": "Hutan : Pohon = Tembok : ...",
+            "options": ["Semen", "Batu Bata", "Rumah", "Cat"],
+            "answer": "Batu Bata",
+            "explanation": "Hutan terdiri dari kumpulan pohon, tembok terdiri dari kumpulan batu bata (penyusun utama)."
+          },
+          {
+            "id": "ABS_13",
+            "question": "Semua X adalah Y. Sebagian Y adalah Z. Maka...",
+            "options": [
+              "Semua X adalah Z",
+              "Semua Z adalah X",
+              "Sebagian X mungkin Z",
+              "Tidak ada X yang Z"
+            ],
+            "answer": "Sebagian X mungkin Z",
+            "explanation": "Tidak ada kepastian bahwa lingkaran X beririsan dengan lingkaran Z, tapi ada kemungkinan (Probabilitas)."
+          },
+          {
+            "id": "ABS_14",
+            "question": "Pilih elemen selanjutnya: Segitiga (3 sisi), Segiempat (4 sisi), Segilima (5 sisi), ...",
+            "options": ["Prisma", "Segienam", "Lingkaran", "Jajar Genjang"],
+            "answer": "Segienam",
+            "explanation": "Pola penambahan jumlah sisi (+1)."
+          },
+          {
+            "id": "ABS_15",
+            "question": "Air : Es = Uap : ...",
+            "options": ["Air", "Gas", "Udara", "Embun"],
+            "answer": "Air",
+            "explanation": "Air didinginkan jadi Es, Uap didinginkan jadi Air (Perubahan wujud akibat penurunan suhu)."
+          },
+          {
+            "id": "ABS_16",
+            "question": "Cari pasangan yang salah.",
+            "options": [
+              "Dokter : Rumah Sakit",
+              "Guru : Sekolah",
+              "Petani : Sawah",
+              "Nelayan : Gunung"
+            ],
+            "answer": "Nelayan : Gunung",
+            "explanation": "Nelayan bekerja di laut/perairan, bukan gunung."
+          },
+          {
+            "id": "ABS_17",
+            "question": "Jika A > B dan B = C, maka...",
+            "options": ["A = C", "A < C", "A > C", "C > A"],
+            "answer": "A > C",
+            "explanation": "Sifat transitif pertidaksamaan."
+          },
+          {
+            "id": "ABS_18",
+            "question": "Manakah yang merupakan bentuk abstrak dari 'Waktu'?",
+            "options": ["Jam Tangan", "Kalender", "Detik", "Durasi"],
+            "answer": "Durasi",
+            "explanation": "Jam dan kalender adalah alat, detik adalah satuan, durasi adalah konsep abstrak lamanya waktu."
+          },
+          {
+            "id": "ABS_19",
+            "question": "Lanjutkan pola: O, O, X, O, O, X, O, ...",
+            "options": ["X", "O", "Y", "Z"],
+            "answer": "O",
+            "explanation": "Polanya adalah dua O diikuti satu X. Setelah X adalah O pertama."
+          },
+          {
+            "id": "ABS_20",
+            "question": "Ulat : Kupu-kupu = Bayi : ...",
+            "options": ["Anak", "Remaja", "Dewasa", "Tua"],
+            "answer": "Dewasa",
+            "explanation": "Bentuk matang/fase akhir metamorfosis (Ulat -> Kupu-kupu) analog dengan fase pertumbuhan (Bayi -> Dewasa)."
+          }
+        ],
+        "verbal": [
+          {
+            "id": "VER_01",
+            "question": "Sinonim dari 'EFEKTIF' adalah...",
+            "options": ["Efisien", "Manjur", "Hemat", "Cepat"],
+            "answer": "Manjur",
+            "explanation": "Efektif berarti membawa hasil/manjur."
+          },
+          {
+            "id": "VER_02",
+            "question": "Mobil : Bensin = Manusia : ...",
+            "options": ["Makanan", "Darah", "Kaki", "Rumah"],
+            "answer": "Makanan",
+            "explanation": "Analogi sumber energi."
+          },
+          {
+            "id": "VER_03",
+            "question": "Antonim dari 'ABADI' adalah...",
+            "options": ["Kekal", "Sementara", "Lama", "Tetap"],
+            "answer": "Sementara",
+            "explanation": "Lawan kata abadi adalah fana/sementara."
+          },
+          {
+            "id": "VER_04",
+            "question": "Sinonim dari kata 'NISBI' adalah...",
+            "options": ["Mutlak", "Relatif", "Pasti", "Ukuran"],
+            "answer": "Relatif",
+            "explanation": "Nisbi berarti tidak mutlak atau bergantung pada pembanding (relatif)."
+          },
+          {
+            "id": "VER_05",
+            "question": "KULIT : SISIK = ATAP : ...",
+            "options": ["Dinding", "Genteng", "Lantai", "Kaca"],
+            "answer": "Genteng",
+            "explanation": "Analogi pelindung bagian luar. Hewan (ikan/reptil) dilindungi sisik, rumah dilindungi genteng."
+          },
+          {
+            "id": "VER_06",
+            "question": "Antonim dari kata 'SPORADIS' adalah...",
+            "options": ["Jarang", "Sering", "Kadang-kadang", "Berhenti"],
+            "answer": "Sering",
+            "explanation": "Sporadis berarti jarang-jarang atau tidak tentu, lawannya adalah sering atau kerap."
+          },
+          {
+            "id": "VER_07",
+            "question": "Sinonim dari kata 'AGITASI' adalah...",
+            "options": ["Hasutan", "Perjanjian", "Perdamaian", "Diskusi"],
+            "answer": "Hasutan",
+            "explanation": "Agitasi adalah hasutan kepada orang banyak untuk mengadakan huru-hara atau pemberontakan."
+          },
+          {
+            "id": "VER_08",
+            "question": "PESAWAT : AVTUR = SEPEDA MOTOR : ...",
+            "options": ["Solar", "Bensin", "Minyak", "Listrik"],
+            "answer": "Bensin",
+            "explanation": "Analogi bahan bakar yang digunakan."
+          },
+          {
+            "id": "VER_09",
+            "question": "Manakah kata yang tidak termasuk dalam kelompoknya?",
+            "options": ["Mawar", "Melati", "Bayam", "Anggrek"],
+            "answer": "Bayam",
+            "explanation": "Bayam adalah jenis sayuran, sedangkan yang lainnya adalah jenis bunga hias."
+          },
+          {
+            "id": "VER_10",
+            "question": "Antonim dari kata 'UNIVERSAL' adalah...",
+            "options": ["Global", "Menyeluruh", "Parsial", "Umum"],
+            "answer": "Parsial",
+            "explanation": "Universal berarti umum/seluruhnya, lawannya adalah parsial (sebagian/khusus)."
+          },
+          {
+            "id": "VER_11",
+            "question": "Sinonim dari kata 'KLEPTOFORIA' adalah...",
+            "options": [
+              "Takut ketinggian",
+              "Takut ruang sempit",
+              "Suka berbohong",
+              "Suka mencuri"
+            ],
+            "answer": "Suka mencuri",
+            "explanation": "Kleptoforia (atau kleptomania) adalah gangguan impuls untuk mencuri."
+          },
+          {
+            "id": "VER_12",
+            "question": "TELESKOP : BINTANG = MIKROSKOP : ...",
+            "options": ["Bulan", "Matahari", "Bakteri", "Langit"],
+            "answer": "Bakteri",
+            "explanation": "Analogi alat dan objek yang diamati. Teleskop untuk benda jauh/besar, mikroskop untuk benda renik."
+          },
+          {
+            "id": "VER_13",
+            "question": "Antonim dari kata 'GEGAP GEMPITA' adalah...",
+            "options": ["Ramai", "Sunyi", "Riuh", "Meriah"],
+            "answer": "Sunyi",
+            "explanation": "Gegap gempita berarti sangat ramai/riuh, lawannya adalah sunyi/senyap."
+          },
+          {
+            "id": "VER_14",
+            "question": "Sinonim dari kata 'EKSKAVASI' adalah...",
+            "options": [
+              "Penggalian",
+              "Penyelamatan",
+              "Penguburan",
+              "Pertolongan"
+            ],
+            "answer": "Penggalian",
+            "explanation": "Ekskavasi adalah proses penggalian (biasanya dalam arkeologi atau tambang)."
+          },
+          {
+            "id": "VER_15",
+            "question": "DOKTOR : DISERTASI = SARJANA : ...",
+            "options": ["Tesis", "Skripsi", "Makalah", "Jurnal"],
+            "answer": "Skripsi",
+            "explanation": "Analogi tugas akhir untuk gelar akademik. Doktor membuat disertasi, Sarjana membuat skripsi."
+          },
+          {
+            "id": "VER_16",
+            "question": "Pilihlah kata yang memiliki ejaan yang benar menurut KBBI.",
+            "options": ["Apotik", "Apotek", "Athlet", "Antri"],
+            "answer": "Apotek",
+            "explanation": "Baku: Apotek (bukan Apotik), Atlet (bukan Athlet), Antre (bukan Antri)."
+          },
+          {
+            "id": "VER_17",
+            "question": "AIR : UAP = ES : ...",
+            "options": ["Dingin", "Beku", "Air", "Kristal"],
+            "answer": "Air",
+            "explanation": "Perubahan wujud karena dipanaskan. Air dipanaskan jadi Uap, Es dipanaskan (mencair) jadi Air."
+          },
+          {
+            "id": "VER_18",
+            "question": "Antonim dari kata 'PROMINEN' adalah...",
+            "options": ["Terkemuka", "Biasa", "Menonjol", "Utama"],
+            "answer": "Biasa",
+            "explanation": "Prominen berarti terkemuka atau menonjol, lawannya adalah biasa atau tidak dikenal."
+          },
+          {
+            "id": "VER_19",
+            "question": "Sinonim dari kata 'INSOMNIA' adalah...",
+            "options": [
+              "Mudah tidur",
+              "Tidur nyenyak",
+              "Tak bisa tidur",
+              "Mimpi buruk"
+            ],
+            "answer": "Tak bisa tidur",
+            "explanation": "Insomnia adalah gangguan kesulitan tidur."
+          },
+          {
+            "id": "VER_20",
+            "question": "BURUNG : TERBANG = IKAN : ...",
+            "options": ["Insang", "Berenang", "Air", "Laut"],
+            "answer": "Berenang",
+            "explanation": "Analogi cara bergerak. Burung bergerak dengan terbang, ikan bergerak dengan berenang."
+          }
+        ]
+      }
+    }
+  }
+}

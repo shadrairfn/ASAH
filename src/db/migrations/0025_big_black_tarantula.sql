@@ -1,0 +1,1 @@
+ALTER TABLE "roadmap_items" ADD COLUMN "vectorize" vector(1024);

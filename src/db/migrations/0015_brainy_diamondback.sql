@@ -1,0 +1,2 @@
+ALTER TABLE "user_question" ADD COLUMN "correct_answer" varchar(128) NOT NULL;--> statement-breakpoint
+ALTER TABLE "user_question" ADD CONSTRAINT "user_question_correct_answer_question_psychotest_answer_fk" FOREIGN KEY ("correct_answer") REFERENCES "public"."question_psychotest"("answer") ON DELETE cascade ON UPDATE no action;

@@ -1,0 +1,1 @@
+ALTER TABLE "careers" ALTER COLUMN "nama_karir" DROP NOT NULL;

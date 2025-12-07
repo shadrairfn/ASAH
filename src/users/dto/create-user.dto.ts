@@ -3,13 +3,17 @@ import { IsDate, IsEmail, IsEnum, IsNotEmpty, IsString, IsTimeZone } from "class
 export class CreateUserDto {
     @IsString()
     @IsNotEmpty()
+    id_user: string;
+
+    @IsString()
+    @IsNotEmpty()
     name: string;
 
     @IsEmail()
     email: string;
 
     @IsString()
-    image: string;
+    image: Express.Multer.File;
 
     @IsDate()
     birth_date: Date;
@@ -23,6 +27,9 @@ export class CreateUserDto {
         message: 'Valid role required'
     })
     role: "user" | "admin" | "institution_admin";
+
+    @IsString()
+    refresh_token: string;
 
     @IsTimeZone()
     created_at: string;

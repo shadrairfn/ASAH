@@ -1,0 +1,1 @@
+ALTER TABLE "question_psychotest" ADD COLUMN "options" text[];

@@ -1,0 +1,1 @@
+ALTER TABLE "user_question" ADD COLUMN "type_question" "type_question" NOT NULL;

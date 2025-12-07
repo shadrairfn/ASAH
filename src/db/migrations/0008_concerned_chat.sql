@@ -1,0 +1,1 @@
+ALTER TABLE "psychotest_results" ADD COLUMN "score" real NOT NULL;
