@@ -1,0 +1,1 @@
+ALTER TABLE "user_question" ADD COLUMN "options" text[];

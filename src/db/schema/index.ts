@@ -189,6 +189,10 @@ export const userQuestion = pgTable('user_question', {
   number: integer('number').notNull(),
   question: varchar('question', { length: 256 }).notNull(),
   answer: varchar('answer', { length: 128 }),
+  optionA: varchar('option_a', { length: 128 }),
+  optionB: varchar('option_b', { length: 128 }),
+  optionC: varchar('option_c', { length: 128 }),
+  optionD: varchar('option_d', { length: 128 }),
   created_at: timestamp('created_at', { withTimezone: true })
     .defaultNow()
     .notNull(),

@@ -10,6 +10,7 @@ import { match } from 'assert';
 @Injectable()
 export class PsychotestService {
   constructor(@Inject('DRIZZLE') private readonly db) {}
+  
   async getQuestions(id_user: string) {
     const types = [
       'Openness',
@@ -24,7 +25,7 @@ export class PsychotestService {
       'Verbal',
     ];
 
-    // 1. Ambil soal secara acak (kode lama Anda)
+    // 1. Ambil soal secara acak
     const queries = types.map((type) =>
       this.db
         .select({
@@ -32,6 +33,7 @@ export class PsychotestService {
           type_question: questionPsychotest.type_question,
           question: questionPsychotest.question,
           answer: questionPsychotest.answer,
+          options: questionPsychotest.option,
           explanation: questionPsychotest.explanation,
         })
         .from(questionPsychotest)
@@ -46,32 +48,73 @@ export class PsychotestService {
     // 2. Cek jika ada soal yang ditemukan sebelum insert
     if (allQuestions.length > 0) {
       // 3. Siapkan data untuk dimasukkan ke tabel userQuestion
-      const insertData = allQuestions.map((q, index) => ({
-        id_user: id_user,
+      const insertData = allQuestions.map((q, index) => {
+        // Lakukan console.log di sini (sebelum return)
+        console.log(q); 
+        
+        // Kembalikan objek secara eksplisit
+        if (q.type_question === 'Numeric' || q.type_question === 'Spatial' || q.type_question === 'Perceptual' || q.type_question === 'Abstract' || q.type_question === 'Verbal') {
+          return {
+            id_user: id_user,
+            id_question: q.id_question,
+            type_question: q.type_question,
+            question: q.question, 
+            optionA: q.options[0],
+            optionB: q.options[1],
+            optionC: q.options[2],
+            optionD: q.options[3],
+            number: index + 1, 
+            correct_answer: q.answer,
+          }
+        }
+        return {
+          id_user: id_user,
+          id_question: q.id_question,
+          type_question: q.type_question,
+          question: q.question, 
+          number: index + 1, 
+          correct_answer: q.answer,
+        };
+      });
+
+      console.log('Insert Data:', insertData);
+
+      // 4. Lakukan Bulk Insert ke database dan return inserted records
+      const insertedRecords = await this.db
+        .insert(userQuestion)
+        .values(insertData)
+        .returning();
+
+      console.log('Inserted Records:', insertedRecords);
+
+      // 5. Map questions dengan id_user_question dari database
+      const questionsWithUserQuestionId = allQuestions.map((q, index) => ({
         id_question: q.id_question,
+        id_user_question: insertedRecords[index].id_user_question,
         type_question: q.type_question,
-        question: q.question, 
-        number: index + 1, 
-        correct_answer: q.answer,
+        question: q.question,
+        explanation: q.explanation,
+        number: index + 1,
       }));
 
-      console.log(insertData);
-
-      // 4. Lakukan Bulk Insert ke database
-      await this.db.insert(userQuestion).values(insertData);
+      return {
+        status: 200,
+        message: 'Success fetching and assigning questions',
+        data: questionsWithUserQuestionId,
+      };
     }
 
     return {
       status: 200,
-      message: 'Success fetching and assigning questions',
-      data: allQuestions,
+      message: 'No questions found',
+      data: [],
     };
   }
 
   async submitAptitude(id_user: string, payload: { user_answers: any[] }) {
-    // 1. Ekstrak array dari dalam object payload (jika terbungkus)
-    // Jika Anda yakin inputnya langsung array, ganti 'payload.user_answers' menjadi 'payload'
     const answersInput = payload.user_answers || payload;
+
+    console.log('Received answers:', answersInput);
 
     let scoreNumeric = 0;
     let scoreSpatial = 0;
@@ -85,25 +128,50 @@ export class PsychotestService {
     let scoreAgreeableness = 0;
     let scoreNeuroticism = 0;
 
+    // Ambil data user question dengan JOIN ke questionPsychotest untuk dapat scoring_type
     const questionUser = await this.db
       .select({
         id_user_question: userQuestion.id_user_question,
         type_question: userQuestion.type_question, 
-        correct_answer: userQuestion.correct_answer, 
+        correct_answer: userQuestion.correct_answer,
+        id_question: userQuestion.id_question,
       })
       .from(userQuestion)
-      .where(eq(userQuestion.id_user, id_user))
-      .limit(10);
+      .where(eq(userQuestion.id_user, id_user));
       
-    const processedResults = questionUser.map((dbQ) => {
+    console.log('Question User from DB:', questionUser);
+    console.log('Total questions:', questionUser.length);
+
+    // Ambil semua id_question untuk query ke questionPsychotest
+    const questionIds = questionUser.map(q => q.id_question);
+    
+    // Get scoring_type dari questionPsychotest
+    const questionDetails = await this.db
+      .select({
+        id_question: questionPsychotest.id_question,
+        scoring_type: questionPsychotest.scoring_type, // Ambil dari sini
+      })
+      .from(questionPsychotest)
+      .where(inArray(questionPsychotest.id_question, questionIds));
+
+    console.log('Question Details:', questionDetails);
+
+    // Process setiap jawaban
+    questionUser.forEach((dbQ) => {
       const matchAnswer = answersInput.find(
         (input) => input.id_user_question === dbQ.id_user_question,
       );
 
       if (matchAnswer) {
-        const type = dbQ.type_question; 
-        const scoringType = dbQ.scoring_type;
-        let reverse = 0;
+        const type = dbQ.type_question;
+        
+        // Cari scoring_type dari questionDetails
+        const questionDetail = questionDetails.find(
+          qd => qd.id_question === dbQ.id_question
+        );
+        const scoringType = questionDetail?.scoring_type || 'normal';
+
+        console.log(`Processing: ${type}, answer: ${matchAnswer.answer}, correct: ${dbQ.correct_answer}, scoring: ${scoringType}`);
 
         // Cek apakah tipe soal termasuk Aptitude
         if (type === 'Numeric') {
@@ -116,35 +184,61 @@ export class PsychotestService {
           scoreAbstract += matchAnswer.answer === dbQ.correct_answer ? 1 : 0;
         } else if (type === 'Verbal') {
           scoreVerbal += matchAnswer.answer === dbQ.correct_answer ? 1 : 0;
-        } else if (type === 'Openness' && scoringType === 'normal') {
-          scoreOpeness += parseFloat(matchAnswer.answer) || 0;
-        } else if (type === 'Openness' && scoringType === 'reverse') {
-          reverse = 6 - parseFloat(matchAnswer.answer) || 0;
-          scoreOpeness += reverse;
-        } else if (type === 'Conscientiousness' && scoringType === 'normal') {
-          scoreConscientiousness += parseFloat(matchAnswer.answer) || 0;
-        } else if (type === 'Conscientiousness' && scoringType === 'reverse') {
-          reverse = 6 - parseFloat(matchAnswer.answer) || 0;
-          scoreConscientiousness += reverse;
-        } else if (type === 'Extraversion' && scoringType === 'normal') {
-          scoreExtraversion += parseFloat(matchAnswer.answer) || 0;
-        } else if (type === 'Extraversion' && scoringType === 'reverse') {
-          reverse = 6 - parseFloat(matchAnswer.answer) || 0;
-          scoreExtraversion += reverse;
-        } else if (type === 'Agreeableness' && scoringType === 'normal') {
-          scoreAgreeableness += parseFloat(matchAnswer.answer) || 0;
-        } else if (type === 'Agreeableness' && scoringType === 'reverse') {
-          reverse = 6 - parseFloat(matchAnswer.answer) || 0;
-          scoreAgreeableness += reverse;
-        } else if (type === 'Neuroticism' && scoringType === 'normal') {
-          scoreNeuroticism += parseFloat(matchAnswer.answer) || 0;
-        } else if (type === 'Neuroticism' && scoringType === 'reverse') {
-          reverse = 6 - parseFloat(matchAnswer.answer) || 0;
-          scoreNeuroticism += reverse;
+        } else if (type === 'Openness') {
+          if (scoringType === 'reverse') {
+            const reverse = 6 - parseFloat(matchAnswer.answer);
+            scoreOpeness += reverse;
+          } else {
+            scoreOpeness += parseFloat(matchAnswer.answer) || 0;
+          }
+        } else if (type === 'Conscientiousness') {
+          if (scoringType === 'reverse') {
+            const reverse = 6 - parseFloat(matchAnswer.answer);
+            scoreConscientiousness += reverse;
+          } else {
+            scoreConscientiousness += parseFloat(matchAnswer.answer) || 0;
+          }
+        } else if (type === 'Extraversion') {
+          if (scoringType === 'reverse') {
+            const reverse = 6 - parseFloat(matchAnswer.answer);
+            scoreExtraversion += reverse;
+          } else {
+            scoreExtraversion += parseFloat(matchAnswer.answer) || 0;
+          }
+        } else if (type === 'Agreeableness') {
+          if (scoringType === 'reverse') {
+            const reverse = 6 - parseFloat(matchAnswer.answer);
+            scoreAgreeableness += reverse;
+          } else {
+            scoreAgreeableness += parseFloat(matchAnswer.answer) || 0;
+          }
+        } else if (type === 'Neuroticism') {
+          if (scoringType === 'reverse') {
+            const reverse = 6 - parseFloat(matchAnswer.answer);
+            scoreNeuroticism += reverse;
+          } else {
+            scoreNeuroticism += parseFloat(matchAnswer.answer) || 0;
+          }
         }
+      } else {
+        console.log(`No answer found for id_user_question: ${dbQ.id_user_question}`);
       }
     });
 
+    console.log('Raw Scores:', {
+      scoreNumeric,
+      scoreSpatial,
+      scorePerceptual,
+      scoreAbstract,
+      scoreVerbal,
+      scoreOpeness,
+      scoreConscientiousness,
+      scoreExtraversion,
+      scoreAgreeableness,
+      scoreNeuroticism,
+    });
+
+    // Hitung average (dibagi 3 karena setiap tipe ada 3 soal)
     const avgOpen = (scoreOpeness / 3) / 5;
     const avgCon = (scoreConscientiousness / 3) / 5;
     const avgExt = (scoreExtraversion / 3) / 5;
@@ -184,6 +278,8 @@ export class PsychotestService {
       verbal: avgVer,
       vectorize_score: vectorizeScore,
     };
+
+    console.log('Final Result:', resultUser);
 
     await this.db
       .insert(psychotestResults)
