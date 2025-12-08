@@ -88,11 +88,17 @@ export class PsychotestService {
       console.log('Inserted Records:', insertedRecords);
 
       // 5. Map questions dengan id_user_question dari database
+
       const questionsWithUserQuestionId = allQuestions.map((q, index) => ({
         id_question: q.id_question,
         id_user_question: insertedRecords[index].id_user_question,
         type_question: q.type_question,
         question: q.question,
+        // Perhatikan penambahan titik (.) sebelum [0]
+        optionA: q.options?.[0] || null, 
+        optionB: q.options?.[1] || null,
+        optionC: q.options?.[2] || null,
+        optionD: q.options?.[3] || null,
         explanation: q.explanation,
         number: index + 1,
       }));
