@@ -1,0 +1,1 @@
+ALTER TABLE "careers" ADD COLUMN "vectorized" vector(10);

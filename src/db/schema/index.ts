@@ -142,7 +142,7 @@ export const psychotestResults = pgTable('psychotest_results', {
   abstract: real('abstract').notNull(),
   verbal: real('verbal').notNull(),
 
-  score: real('score'),
+  vectorize_score: vector('vectorize_score', {dimensions : 10}).notNull(),
 
   rekomendasi_gaya_belajar: varchar('rekomendasi_gaya_belajar', {
     length: 64,
@@ -213,6 +213,7 @@ export const careers = pgTable('careers', {
   name: varchar('name', { length: 128 }).notNull(),
   description: text('description'),
   industry_name: varchar('industry_name', { length: 128 }),
+  vectorized : vector('vectorized', { dimensions: 10 }),
   created_at: timestamp('created_at', { withTimezone: true })
     .defaultNow()
     .notNull(),
@@ -230,8 +231,8 @@ export const careerRecommendations = pgTable('career_recommendations', {
     .notNull()
     .references(() => users.id_user, { onDelete: 'cascade' }),
   id_career: uuid('id_career')
-    .notNull()
     .references(() => careers.id_career, { onDelete: 'cascade' }),
+  options_career : text('options_career').array(),
   career_name: varchar('career_name', { length: 128 }),
   description: text('description'),
   similarity_score: numeric('similarity_score', { precision: 5, scale: 2 }), // 0-100.00

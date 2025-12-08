@@ -12,9 +12,9 @@ export class LlmController {
 
   @Post('mapping')
   @UseGuards(AuthGuard('jwt'))
-  async chat(@Req() req) {
+  async getRecomendation(@Req() req) {
     const userId = req.user['id_user'];
-    return this.llmService.generateText(userId);
+    return this.llmService.getRecomendation(userId);
   }
 
 //   @Post('roadmap')

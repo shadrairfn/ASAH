@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
-import { psychotestResults, careers } from 'src/db/schema';
+import { psychotestResults, careers, careerRecommendations, optionCareers } from 'src/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -40,9 +40,9 @@ export class LlmService {
 
   constructor(private configService: ConfigService, @Inject('DRIZZLE') private readonly db) {
     const apiKey =
-      process.env.GEMINI_API_KEY || 'AIzaSyAYGqA6xEdT64-KQ4v7AeI1gbHnoFUZOqY';
-    const roadmapModel = 'gemini-2.5-pro';
-    const mappingModel = 'gemini-2.5-flash';
+      process.env.GEMINI_API_KEY!;
+    const roadmapModel = process.env.ROADMAP_MODEL!;
+    const mappingModel = process.env.MAPPING_CAREER_MODEL!;
 
     this.genAI = new GoogleGenerativeAI(apiKey);
 
@@ -64,7 +64,7 @@ export class LlmService {
     });
   }
 
-  async generateText(id_user: string) {
+  async getRecomendation(id_user: string) {
     const userResults = await this.db
         .select({
             openness: psychotestResults.openness,
@@ -82,13 +82,44 @@ export class LlmService {
         .where(eq(psychotestResults.id_user, id_user))
         .limit(1);
 
+    const career = await this.db
+        .select({
+            id_career: careers.id_career,
+            name: careers.name,
+            description: careers.description,
+        })
+        .from(careers);
+
+    let careerList = ``
+
+    for (let i = 0; i < career.length; i++) {
+        careerList += `{id_career: ${career[i].id_career}, name: ${career[i].name}, description: ${career[i].description}}\n`
+        if (i < career.length - 1) {
+            careerList += `, `
+        }
+    }
+
     let prompt = 
-    `Karir digital apa yang cocok untuk seseorang dengan 
-    skor kepribadian OCEAN : Openess = ${userResults[0].openness}, 'Conscientiousness' = ${userResults[0].conscientiousness}, 
-    'Extraversion' = ${userResults[0].extraversion}, 'Agreeableness' = ${userResults[0].agreeableness}, 'Neuroticism' = ${userResults[0].neuroticism}. 
-    Kemudian skor Aptitude : 'Numerical' = ${userResults[0].numeric}, 'Spatial' = ${userResults[0].spatial}, 'Perceptual' = ${userResults[0].perceptual}
-    , 'Abstract' = ${userResults[0].abstract}, 'Verbal' = ${userResults[0].verbal}. 
-    Berikan 3 opsi karir dengan format jawaban seperti ini tanpa kalimat tambahan apapun: 1. {karir pertama} 2. {karir kedua} 3. {karir ketiga}`
+    `Berdasarkan karir digital yang tersedia dengan format JSON berikut : ${careerList}. 
+    Buatlah rekomendasi karir digital apa yang cocok untuk seseorang dengan skor kepribadian OCEAN : 
+    1. 'Openess' = ${userResults[0].openness}
+    2. 'Conscientiousness' = ${userResults[0].conscientiousness}
+    3. 'Extraversion' = ${userResults[0].extraversion}
+    4. 'Agreeableness' = ${userResults[0].agreeableness}
+    5. 'Neuroticism' = ${userResults[0].neuroticism}
+
+    Kemudian skor Aptitude :
+    1. 'Numerical' = ${userResults[0].numeric}
+    2.'Spatial' = ${userResults[0].spatial}
+    3.'Perceptual' = ${userResults[0].perceptual}
+    4.'Abstract' = ${userResults[0].abstract}
+    5.'Verbal' = ${userResults[0].verbal}. 
+    
+    Berikan 3 opsi karir dengan format jawaban seperti ini tanpa kalimat tambahan apapun (mengacu pada format JSON diatas): 
+    1. {id karir pertama}
+    2. {id karir kedua} 
+    3. {id karir ketiga}
+    `
         
 
     // 1. Cek apakah prompt benar-benar masuk?
@@ -108,6 +139,8 @@ export class LlmService {
 
     const text = response.text();
 
+    console.log(text);
+
     const careerOptions = text.split('\n');
 
     const firstOption = careerOptions[0];
@@ -118,19 +151,15 @@ export class LlmService {
 
     const careerData = {
       id_user: id_user,
-      career_options: insertOptions,
+      options_career: insertOptions,
     };
 
-    await this.db
-      .insert(careers)
-      .values(
-        careerData,
-      );
+    await this.db.insert(careerRecommendations).values(careerData);
 
     return {
       success: true,
       data: careerData,
-      model: 'gemini-2.5-flash', // Note: Sebaiknya jangan hardcode '2.5-pro' jika belum rilis
+      model: 'gemini-2.5-flash-lite', // Note: Sebaiknya jangan hardcode '2.5-pro' jika belum rilis
     };
   }
 
@@ -174,5 +203,9 @@ export class LlmService {
 
     const result = await chat.sendMessage(newMessage);
     return result.response.text();
+  }
+
+  async mappingVector() {
+    
   }
 }

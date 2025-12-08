@@ -1,0 +1,1 @@
+ALTER TABLE "career_recommendations" ALTER COLUMN "id_career" DROP NOT NULL;

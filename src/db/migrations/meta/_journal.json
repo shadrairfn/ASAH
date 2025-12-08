@@ -218,6 +218,34 @@
       "when": 1765050739117,
       "tag": "0030_safe_paladin",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1765130635614,
+      "tag": "0031_fresh_rocket_racer",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1765130800502,
+      "tag": "0032_motionless_marvex",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1765181199386,
+      "tag": "0033_bitter_bloodstorm",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1765198522074,
+      "tag": "0034_noisy_tony_stark",
+      "breakpoints": true
     }
   ]
 }

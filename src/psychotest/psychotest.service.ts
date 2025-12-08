@@ -37,7 +37,7 @@ export class PsychotestService {
         .from(questionPsychotest)
         .where(eq(questionPsychotest.type_question, type as any))
         .orderBy(sql`RANDOM()`)
-        .limit(1),
+        .limit(3),
     );
 
     const results = await Promise.all(queries);
@@ -50,10 +50,9 @@ export class PsychotestService {
         id_user: id_user,
         id_question: q.id_question,
         type_question: q.type_question,
-        question: q.question, // Mengisi kolom question (redundansi dari schema)
-        number: index + 1, // Mengisi nomor urut soal (1 - 10)
+        question: q.question, 
+        number: index + 1, 
         correct_answer: q.answer,
-        // answer: null,      // Dibiarkan kosong karena user belum menjawab
       }));
 
       console.log(insertData);
@@ -103,6 +102,8 @@ export class PsychotestService {
 
       if (matchAnswer) {
         const type = dbQ.type_question; 
+        const scoringType = dbQ.scoring_type;
+        let reverse = 0;
 
         // Cek apakah tipe soal termasuk Aptitude
         if (type === 'Numeric') {
@@ -115,32 +116,73 @@ export class PsychotestService {
           scoreAbstract += matchAnswer.answer === dbQ.correct_answer ? 1 : 0;
         } else if (type === 'Verbal') {
           scoreVerbal += matchAnswer.answer === dbQ.correct_answer ? 1 : 0;
-        } else if (type === 'Openness') {
+        } else if (type === 'Openness' && scoringType === 'normal') {
           scoreOpeness += parseFloat(matchAnswer.answer) || 0;
-        } else if (type === 'Conscientiousness') {
+        } else if (type === 'Openness' && scoringType === 'reverse') {
+          reverse = 6 - parseFloat(matchAnswer.answer) || 0;
+          scoreOpeness += reverse;
+        } else if (type === 'Conscientiousness' && scoringType === 'normal') {
           scoreConscientiousness += parseFloat(matchAnswer.answer) || 0;
-        } else if (type === 'Extraversion') {
+        } else if (type === 'Conscientiousness' && scoringType === 'reverse') {
+          reverse = 6 - parseFloat(matchAnswer.answer) || 0;
+          scoreConscientiousness += reverse;
+        } else if (type === 'Extraversion' && scoringType === 'normal') {
           scoreExtraversion += parseFloat(matchAnswer.answer) || 0;
-        } else if (type === 'Agreeableness') {
+        } else if (type === 'Extraversion' && scoringType === 'reverse') {
+          reverse = 6 - parseFloat(matchAnswer.answer) || 0;
+          scoreExtraversion += reverse;
+        } else if (type === 'Agreeableness' && scoringType === 'normal') {
           scoreAgreeableness += parseFloat(matchAnswer.answer) || 0;
-        } else if (type === 'Neuroticism') {
+        } else if (type === 'Agreeableness' && scoringType === 'reverse') {
+          reverse = 6 - parseFloat(matchAnswer.answer) || 0;
+          scoreAgreeableness += reverse;
+        } else if (type === 'Neuroticism' && scoringType === 'normal') {
           scoreNeuroticism += parseFloat(matchAnswer.answer) || 0;
+        } else if (type === 'Neuroticism' && scoringType === 'reverse') {
+          reverse = 6 - parseFloat(matchAnswer.answer) || 0;
+          scoreNeuroticism += reverse;
         }
       }
     });
 
+    const avgOpen = (scoreOpeness / 3) / 5;
+    const avgCon = (scoreConscientiousness / 3) / 5;
+    const avgExt = (scoreExtraversion / 3) / 5;
+    const avgAg = (scoreAgreeableness / 3) / 5;
+    const avgNeu = (scoreNeuroticism / 3) / 5;
+
+    const avgNum = scoreNumeric / 3;
+    const avgSpat = scoreSpatial / 3;
+    const avgPer = scorePerceptual / 3;
+    const avgAbs = scoreAbstract / 3;
+    const avgVer = scoreVerbal / 3;
+
+    const vectorizeScore = [
+      avgOpen,
+      avgCon,
+      avgExt,
+      avgAg,
+      avgNeu,
+      avgNum,
+      avgSpat,
+      avgPer,
+      avgAbs,
+      avgVer,
+    ];
+
     const resultUser = {
       id_user: id_user,
-      openness: scoreOpeness,
-      conscientiousness: scoreConscientiousness,
-      extraversion: scoreExtraversion,
-      agreeableness: scoreAgreeableness,
-      neuroticism: scoreNeuroticism,
-      numeric: scoreNumeric,
-      spatial: scoreSpatial,
-      perceptual: scorePerceptual,
-      abstract: scoreAbstract,
-      verbal: scoreVerbal,
+      openness: avgOpen,
+      conscientiousness: avgCon,
+      extraversion: avgExt,
+      agreeableness: avgAg,
+      neuroticism: avgNeu,
+      numeric: avgNum,
+      spatial: avgSpat,
+      perceptual: avgPer,
+      abstract: avgAbs,
+      verbal: avgVer,
+      vectorize_score: vectorizeScore,
     };
 
     await this.db
@@ -159,6 +201,7 @@ export class PsychotestService {
           perceptual: resultUser.perceptual,
           abstract: resultUser.abstract,
           verbal: resultUser.verbal,
+          vectorize_score: resultUser.vectorize_score,
         },
       });
 

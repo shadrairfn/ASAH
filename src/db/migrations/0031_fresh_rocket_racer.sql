@@ -1,0 +1,1 @@
+ALTER TABLE "career_recommendations" ADD COLUMN "options_career" text[];

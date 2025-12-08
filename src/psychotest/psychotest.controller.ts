@@ -8,7 +8,7 @@ export class PsychotestController {
 
     @Get('/')
     @UseGuards(AuthGuard('jwt'))
-    async getQueston(@Req() req) {
+    async getQuestions(@Req() req) {
         const userId = req.user['id_user'];
         return this.psychotestService.getQuestions(userId);
     }
