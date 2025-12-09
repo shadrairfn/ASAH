@@ -1,56 +1,88 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { LlmService } from 'src/llm/llm.service';
-import { careerRecommendations } from 'src/db/schema';
-import { eq } from 'drizzle-orm';
+import { careerRecommendations, careers, psychotestResults } from 'src/db/schema';
+import { sql, inArray, eq, cosineDistance } from 'drizzle-orm';
 
 @Injectable()
 export class RoadmapService {
-    constructor(@Inject('DRIZZLE') private readonly db, private readonly llmService: LlmService) {}
+  constructor(
+    @Inject('DRIZZLE') private readonly db,
+    private readonly llmService: LlmService,
+  ) {}
 
-    async getRoadmap(id_user: string) {
-        const model = this.llmService.getModelRoadmap();
+  async getRoadmap(id_user: string) {
+    const model = this.llmService.getModelRoadmap();
+  }
 
-
-    }
-
-    async getOptionsCareer(id_user: string) {
-        const userCareer = await this.db
+  async getOptionsCareer(id_user: string) {
+    const userRecord = await this.db
           .select({
-            options_career: careerRecommendations.options_career,
+            vectorized_result: psychotestResults.vectorize_score,
           })
-          .from(careerRecommendations)
-          .where(eq(careerRecommendations.id_user, id_user))
+          .from(psychotestResults)
+          .where(eq(psychotestResults.id_user, id_user))
           .limit(1);
     
-        userCareer.map((career, index) => {
-          const split = [
-            career.options_career[0], career.options_career[1], 
-            career.options_career[2], career.options_career[3], 
-            career.options_career[4], career.options_career[5]
-          ]
-          
-          userCareer[index] = split;
-        })
+        if (!userRecord.length || !userRecord[0].vectorized_result) {
+          throw new Error(
+            'User belum memiliki hasil tes atau vektor belum digenerate.',
+          );
+        }
     
-        const returnValue = [
-          {
-            id_career: userCareer[0][0],
-            similarity: userCareer[0][1],
-          },
-          {
-            id_career: userCareer[0][2],
-            similarity: userCareer[0][3],
-          },
-          {
-            id_career: userCareer[0][4],
-            similarity: userCareer[0][5],
-          }
-        ]
-    
-        return {
-          success: true,
-          data: returnValue,
-          model: 'vector-search-v1',
-        };
-      }
+    const userVector = userRecord[0].vectorized_result;
+    // 1. Ambil data rekomendasi mentah
+    const recommendation = await this.db
+      .select({
+        options_career: careerRecommendations.options_career,
+      })
+      .from(careerRecommendations)
+      .where(eq(careerRecommendations.id_user, id_user))
+      .limit(1);
+
+    // Cek jika data tidak ditemukan
+    if (recommendation.length === 0) {
+      return {
+        success: false,
+        message: 'User recommendations not found',
+        data: [],
+      };
+    }
+
+    const rawOptions = recommendation[0].options_career;
+
+    // 2. Ambil ID saja dari array (index genap: 0, 2, 4)
+    // Asumsi format array: [id1, score1, id2, score2, id3, score3]
+    const targetIds = [rawOptions[0], rawOptions[2], rawOptions[4]];
+
+    // 3. Ambil detail career dari tabel careers berdasarkan ID yang didapat
+    const careerDetails = await this.db
+      .select({
+        id_career: careers.id_career,
+        name: careers.name,
+        description: careers.description,
+        similarity: sql<number>`1 - (${cosineDistance(careers.vectorized, userVector)})`,
+      })
+      .from(careers)
+      .where(inArray(careers.id_career, targetIds));
+
+    // 4. Susun return value agar urutannya sesuai dengan rekomendasi awal
+    // (Karena hasil query database tidak menjamin urutan)
+    const returnValue = targetIds.map((id) => {
+      // Cari detail yang cocok dengan ID
+      const detail = careerDetails.find((c) => c.id_career === id);
+
+      return {
+        id_career: id,
+        name: detail ? detail.name : 'Unknown Career',
+        description: detail ? detail.description : 'No description available',
+        similarity: detail ? detail.similarity : 0,
+      };
+    });
+
+    return {
+      success: true,
+      data: returnValue,
+      model: 'vector-search-v1',
+    };
+  }
 }
