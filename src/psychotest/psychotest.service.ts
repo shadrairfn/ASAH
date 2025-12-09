@@ -49,9 +49,6 @@ export class PsychotestService {
     if (allQuestions.length > 0) {
       // 3. Siapkan data untuk dimasukkan ke tabel userQuestion
       const insertData = allQuestions.map((q, index) => {
-        // Lakukan console.log di sini (sebelum return)
-        console.log(q); 
-        
         // Kembalikan objek secara eksplisit
         if (q.type_question === 'Numeric' || q.type_question === 'Spatial' || q.type_question === 'Perceptual' || q.type_question === 'Abstract' || q.type_question === 'Verbal') {
           return {
@@ -77,18 +74,13 @@ export class PsychotestService {
         };
       });
 
-      console.log('Insert Data:', insertData);
-
       // 4. Lakukan Bulk Insert ke database dan return inserted records
       const insertedRecords = await this.db
         .insert(userQuestion)
         .values(insertData)
         .returning();
 
-      console.log('Inserted Records:', insertedRecords);
-
       // 5. Map questions dengan id_user_question dari database
-
       const questionsWithUserQuestionId = allQuestions.map((q, index) => ({
         id_question: q.id_question,
         id_user_question: insertedRecords[index].id_user_question,
@@ -155,7 +147,7 @@ export class PsychotestService {
     const questionDetails = await this.db
       .select({
         id_question: questionPsychotest.id_question,
-        scoring_type: questionPsychotest.scoring_type, // Ambil dari sini
+        scoring_type: questionPsychotest.scoring_type, 
       })
       .from(questionPsychotest)
       .where(inArray(questionPsychotest.id_question, questionIds));
