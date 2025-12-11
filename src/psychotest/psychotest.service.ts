@@ -109,7 +109,7 @@ export class PsychotestService {
     };
   }
 
-  async submitAptitude(id_user: string, payload: { user_answers: any[] }) {
+  async submitPsychotest(id_user: string, payload: { user_answers: any[] }) {
     const answersInput = payload.user_answers || payload;
 
     console.log('Received answers:', answersInput);
