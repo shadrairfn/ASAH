@@ -1,0 +1,1 @@
+ALTER TABLE "roadmap_items" ALTER COLUMN "phase" SET DATA TYPE varchar(256);

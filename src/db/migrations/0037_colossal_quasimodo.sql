@@ -1,0 +1,1 @@
+ALTER TABLE "roadmaps" ALTER COLUMN "roadmap_path" SET DATA TYPE jsonb;

@@ -1,7 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Body, NotFoundException } from '@nestjs/common';
 import { LlmService } from 'src/llm/llm.service';
-import { careerRecommendations, careers, psychotestResults } from 'src/db/schema';
-import { sql, inArray, eq, cosineDistance } from 'drizzle-orm';
+import {
+  careerRecommendations,
+  careers,
+  psychotestResults,
+} from 'src/db/schema';
+import { sql, inArray, eq, cosineDistance, desc } from 'drizzle-orm';
 
 @Injectable()
 export class RoadmapService {
@@ -16,19 +20,19 @@ export class RoadmapService {
 
   async getOptionsCareer(id_user: string) {
     const userRecord = await this.db
-          .select({
-            vectorized_result: psychotestResults.vectorize_score,
-          })
-          .from(psychotestResults)
-          .where(eq(psychotestResults.id_user, id_user))
-          .limit(1);
-    
-        if (!userRecord.length || !userRecord[0].vectorized_result) {
-          throw new Error(
-            'User belum memiliki hasil tes atau vektor belum digenerate.',
-          );
-        }
-    
+      .select({
+        vectorized_result: psychotestResults.vectorize_score,
+      })
+      .from(psychotestResults)
+      .where(eq(psychotestResults.id_user, id_user))
+      .limit(1);
+
+    if (!userRecord.length || !userRecord[0].vectorized_result) {
+      throw new Error(
+        'User belum memiliki hasil tes atau vektor belum digenerate.',
+      );
+    }
+
     const userVector = userRecord[0].vectorized_result;
     // 1. Ambil data rekomendasi mentah
     const recommendation = await this.db
@@ -83,6 +87,44 @@ export class RoadmapService {
       success: true,
       data: returnValue,
       model: 'vector-search-v1',
+    };
+  }
+
+  async selectCareer(id_user: string, @Body() body: { id_career: string }) {
+    const { id_career } = body;
+
+    const careerData = await this.db
+      .select({
+        name: careers.name,
+        description: careers.description,
+      })
+      .from(careers)
+      .where(eq(careers.id_career, id_career))
+      .limit(1);
+
+    // Validasi: Apakah karir ditemukan?
+    if (!careerData.length) {
+      throw new NotFoundException('Karir tidak ditemukan.');
+    }
+
+    const selectedCareer = careerData[0];
+
+    console.log(selectedCareer);
+    
+
+    const userRecord = await this.db
+      .update(careerRecommendations)
+      .set({
+        id_career: id_career,
+        career_name: selectedCareer.name,
+        description: selectedCareer.description,
+      })
+      .where(eq(careerRecommendations.id_user, id_user))
+      .returning();
+
+    return {
+      success: true,
+      data: userRecord,
     };
   }
 }

@@ -1,0 +1,2 @@
+ALTER TABLE "roadmap_items" ADD COLUMN "id_user" uuid NOT NULL;--> statement-breakpoint
+ALTER TABLE "roadmap_items" ADD CONSTRAINT "roadmap_items_id_user_users_id_user_fk" FOREIGN KEY ("id_user") REFERENCES "public"."users"("id_user") ON DELETE cascade ON UPDATE no action;

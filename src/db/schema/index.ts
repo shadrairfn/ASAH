@@ -15,7 +15,7 @@ import { relations } from 'drizzle-orm';
 
 // TODO: sesuaikan dengan helper vector yang sudah kamu pakai
 // misal: import { vector } from "pgvector/drizzle-orm";
-import { vector } from 'drizzle-orm/pg-core'; // contoh saja
+import { vector, jsonb } from 'drizzle-orm/pg-core'; // contoh saja
 
 /* ==========================
    ENUMS
@@ -118,6 +118,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   institutionAdmins: many(institutionAdmins),
   userQuest: many(userQuestion),
   optionCareers: many(optionCareers),
+  roadmapItems: many(roadmapItems),
 }));
 
 /* ==========================
@@ -287,7 +288,7 @@ export const roadmaps = pgTable('roadmaps', {
   id_career: uuid('id_career')
     .notNull()
     .references(() => careers.id_career, { onDelete: 'cascade' }),
-  roadmapPath: text('roadmap_path').array(),
+  roadmapPath: jsonb('roadmap_path'),
   start_date: date('start_date'),
   end_date: date('end_date'),
   created_at: timestamp('created_at', { withTimezone: true })
@@ -309,14 +310,16 @@ export const roadmapsRelations = relations(roadmaps, ({ one, many }) => ({
 
 export const roadmapItems = pgTable('roadmap_items', {
   id_item: uuid('id_item').defaultRandom().primaryKey().notNull(),
+  id_user: uuid('id_user')
+    .notNull()
+    .references(() => users.id_user, { onDelete: 'cascade' }),
   id_roadmap: uuid('id_roadmap')
     .notNull()
     .references(() => roadmaps.id_roadmap, { onDelete: 'cascade' }),
-  minggu_ke: integer('minggu_ke').notNull(),
+  phase: varchar('phase', { length: 256 }).notNull(),
   judul: varchar('judul', { length: 128 }).notNull(),
-  deskripsi: text('deskripsi'),
-  skill_target: varchar('skill_target', { length: 128 }),
-  vectorize: vector("vectorize", { dimensions: 1024 }),
+  materi: text('materi').notNull(),
+  vectorize: vector("vectorize", { dimensions: 768 }),
   created_at: timestamp('created_at', { withTimezone: true })
     .defaultNow()
     .notNull(),
@@ -330,6 +333,10 @@ export const roadmapItemsRelations = relations(
       references: [roadmaps.id_roadmap],
     }),
     modules: many(modules),
+    user: one(users, {
+      fields: [roadmapItems.id_user],
+      references: [users.id_user],
+    })
   }),
 );
 

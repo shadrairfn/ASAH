@@ -1,0 +1,1 @@
+ALTER TABLE "roadmap_items" ALTER COLUMN "vectorize" SET DATA TYPE vector(768);
