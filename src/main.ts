@@ -9,7 +9,7 @@ async function bootstrap() {
   
   // Tambahkan baris ini
   app.enableCors({
-    origin: 'http://localhost:5173', // Sesuaikan dengan port frontend
+    origin: true, // Sesuaikan dengan port frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
