@@ -1,4 +1,4 @@
-import { Controller, Body, Param, UploadedFile, Get, Patch, Req, Post, UseInterceptors, UseGuards } from '@nestjs/common';
+import { Controller, Body, Param, UploadedFile, Get, Patch, Req, Post, UseInterceptors, UseGuards, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
@@ -13,7 +13,13 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get('/me')
+  @Get(':me')
+  async findByEmail(@Query('email') email: string) {
+    return this.usersService.findByEmail(email);
+  }
+
+
+  @Get('/:me')
   @UseGuards(AuthGuard('jwt'))
   async findById(@Req() req) {
     const userId = req.user['id_user'];

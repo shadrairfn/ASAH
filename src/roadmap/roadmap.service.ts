@@ -14,10 +14,6 @@ export class RoadmapService {
     private readonly llmService: LlmService,
   ) {}
 
-  async getRoadmap(id_user: string) {
-    const model = this.llmService.getModelRoadmap();
-  }
-
   async getOptionsCareer(id_user: string) {
     const userRecord = await this.db
       .select({
@@ -126,5 +122,12 @@ export class RoadmapService {
       success: true,
       data: userRecord,
     };
+  }
+
+  async getRoadmapUser(id_user: string) {
+    const user = await this.db
+      .select({
+      
+    })
   }
 }

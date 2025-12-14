@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Query} from '@nestjs/common';
 import { users } from '../db/schema/index';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { eq } from "drizzle-orm";
@@ -69,6 +69,33 @@ export class UsersService {
       status: 200,
       message: 'User found successfully',
       data: user[0],
+    }
+  }
+
+  async findByEmail(@Query('email') email: string) {
+    const user = await this.db
+    .select({
+      id_user: users.id_user,
+      email: users.email,
+      name: users.name,
+      image: users.image,
+    })
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
+
+    if (user.length === 0) {
+      return {
+        status: 404,
+        message: 'User not found',
+        data: null,
+      }
+    }
+
+    return {
+      status: 200,
+      message: 'User found successfully',
+      data: user,
     }
   }
 

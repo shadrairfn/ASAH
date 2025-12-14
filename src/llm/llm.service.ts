@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Inject,
+  Param
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
@@ -9,9 +10,9 @@ import {
   psychotestResults,
   careers,
   careerRecommendations,
-  optionCareers,
   roadmaps,
   roadmapItems,
+  quizzes,
 } from 'src/db/schema';
 import { cosineDistance, eq, sql, ilike, like, and, asc } from 'drizzle-orm';
 import * as dotenv from 'dotenv';
@@ -228,6 +229,22 @@ export class LlmService {
     return processedRoadmap;
   }
 
+  async getRoadmapUser(id_user: string) {
+    const roadmap = await this.db
+      .select({
+        roadmapPath: roadmaps.roadmapPath,
+      })
+      .from(roadmaps)
+      .where(eq(roadmaps.id_user, id_user))
+      .limit(1);
+
+    return {
+      status: 200,
+      message: 'Roadmap found successfully',
+      data: roadmap[0],
+    }
+  }
+
   // --- Helper Function Parsing Baru (Phase Aware) ---
   private processDataRoadmap(inputText: string): RoadmapPhase[] {
     const result: RoadmapPhase[] = [];
@@ -371,7 +388,8 @@ export class LlmService {
     try {
       const materials = await this.db
         .select({
-          id: roadmapItems.id_roadmap,
+          id_roadmap: roadmapItems.id_roadmap,
+          id_item: roadmapItems.id_item,
           judul: roadmapItems.judul,
           materi: roadmapItems.materi,
           phase: roadmapItems.phase,
@@ -394,12 +412,14 @@ export class LlmService {
 
       if (materials.length === 0) {
         return {
+          status: 404,
           message: `Tidak ada materi ditemukan untuk fase: ${phaseName}`,
           data: [],
         };
       }
 
       return {
+        status: 200,
         success: true,
         phase_keyword: phaseName,
         total_items: materials.length,
@@ -409,5 +429,158 @@ export class LlmService {
       console.error('Error fetching materials:', error);
       throw new Error('Gagal mengambil materi berdasarkan fase.');
     }
+  }
+
+  async chatWithRoadmap(id_user: string, userMessage: string) {
+    try {
+      const embeddingResult =
+        await this.modelEmbedding.embedContent(userMessage);
+      const queryVector = embeddingResult.embedding.values;
+
+      const relevantMaterials = await this.db
+        .select({
+          judul: roadmapItems.judul,
+          materi: roadmapItems.materi,
+          similarity: sql<number>`1 - (${cosineDistance(roadmapItems.vectorize, queryVector)})`,
+        })
+        .from(roadmapItems)
+        .where(eq(roadmapItems.id_user, id_user))
+        .orderBy(cosineDistance(roadmapItems.vectorize, queryVector))
+        .limit(3);
+      let contextString = '';
+
+      if (relevantMaterials.length > 0) {
+        contextString = relevantMaterials
+          .map((item) => `Topik: ${item.judul}\nIsi Materi: ${item.materi}`)
+          .join('\n\n---\n\n');
+      }
+
+      console.log('Context Found:', relevantMaterials.length, 'items');
+
+      const systemPrompt = `
+        Anda adalah Asisten Belajar AI (ASAH Assistant).
+        Tugas Anda adalah menjawab pertanyaan user BERDASARKAN materi yang telah dipelajari user di bawah ini.
+        
+        INSTRUKSI:
+        1. Gunakan HANYA informasi dari "KONTEKS MATERI" untuk menjawab.
+        2. Jika jawaban tidak ada di konteks, katakan "Maaf, informasi tersebut tidak ada dalam materi roadmap Anda saat ini." atau berikan jawaban umum tapi beri disclaimer.
+        3. Jawab dengan ringkas, ramah, dan memotivasi.
+
+        KONTEKS MATERI (DARI DATABASE):
+        ${contextString}
+
+        ----------------
+        Pertanyaan User: ${userMessage}
+      `;
+
+      const result = await this.modelMapping.generateContent(systemPrompt);
+      const response = await result.response;
+
+      return {
+        reply: response.text(),
+        sources: relevantMaterials.map((m) => m.judul),
+      };
+    } catch (error) {
+      console.error('Error RAG Chat:', error);
+      throw new Error('Gagal memproses chat dengan materi.');
+    }
+  }
+
+  async generateQuiz(id_user: string, id_roadmap_item: string) {
+    await this.db
+    .delete(quizzes)
+    .where(eq(quizzes.id_roadmapItems, id_roadmap_item))
+
+    const contentData = await this.db
+      .select({
+        judul: roadmapItems.judul,
+        materi: roadmapItems.materi,
+      })
+      .from(roadmapItems)
+      .where(eq(roadmapItems.id_item, id_roadmap_item))
+      .limit(1);
+
+    const judul = contentData[0].judul;
+    const materi = contentData[0].materi;
+
+    const prompt = `
+    Berdasarkan konten berikut, buatlah 5 soal pilihan ganda.
+    
+    Judul Materi: "${judul}"
+    Isi Materi: "${materi}"
+    
+    Kembalikan output HANYA berupa Array JSON yang valid dengan struktur berikut:
+    [
+      {
+        "question": "Teks pertanyaan",
+        "opsi_a": "Teks pilihan A",
+        "opsi_b": "Teks pilihan B",
+        "opsi_c": "Teks pilihan C",
+        "opsi_d": "Teks pilihan D",
+        "correct_answer": "Teks pilihan A" 
+      }
+    ]
+    Pastikan "correct_answer" hanya berisi 'A', 'B', 'C', atau 'D'.
+    JANGAN gunakan format Markdown seperti \`\`\`json. Hanya JSON mentah (raw JSON).
+    `;
+
+    const result = await this.modelMapping.generateContent(prompt);
+    const response = await result.response;
+
+    const cleanJson = response
+      .text()
+      .replace(/```json|```/g, '')
+      .trim();
+
+    const quizData = JSON.parse(cleanJson);
+
+    const payload = quizData.map((item) => ({
+      id_user: id_user,
+      id_roadmapItems: id_roadmap_item,
+      question: item.question,
+      opsi_a: item.opsi_a,
+      opsi_b: item.opsi_b,
+      opsi_c: item.opsi_c,
+      opsi_d: item.opsi_d,
+      correct_answer: item.correct_answer,
+      // id_quiz dan created_at akan otomatis dihandle oleh defaultRandom() & defaultNow() di schema
+    }));
+
+    // 6. Bulk Insert ke Database
+    if (payload.length > 0) {
+      await this.db.insert(quizzes).values(payload);
+    }
+
+    return cleanJson;
+  }
+
+  async getQuizByRoadmapId(userId: string, roadmapId: string) {
+    // 1. Ambil data dari tabel quizzes
+    const quizData = await this.db
+      .select()
+      .from(quizzes)
+      .where(eq(quizzes.id_roadmapItems, roadmapId)); // Filter by materi ID
+
+    // 2. Jika kosong, mungkin perlu generate dulu?
+    // Untuk saat ini kita return kosong atau throw error 404
+    if (!quizData.length) {
+      return { status: 404, message: 'Quiz belum tersedia', data: [] };
+    }
+
+    return {
+      status: 200,
+      message: 'Quiz retrieved successfully',
+      data: quizData,
+    };
+  }
+
+  async submitQuiz(id_roadmap_item: string, score: number) {
+    await this.db
+      .update(roadmapItems)
+      .set({
+        gradeQuiz: score,
+      })
+      .where(eq(roadmapItems.id_item, id_roadmap_item))
+      .returning();
   }
 }

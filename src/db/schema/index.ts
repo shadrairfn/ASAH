@@ -320,6 +320,7 @@ export const roadmapItems = pgTable('roadmap_items', {
   judul: varchar('judul', { length: 128 }).notNull(),
   materi: text('materi').notNull(),
   vectorize: vector("vectorize", { dimensions: 768 }),
+  gradeQuiz: integer("grade_quiz"),
   created_at: timestamp('created_at', { withTimezone: true })
     .defaultNow()
     .notNull(),
@@ -381,18 +382,26 @@ export const modulesRelations = relations(modules, ({ one, many }) => ({
 
 export const quizzes = pgTable('quizzes', {
   id_quiz: uuid('id_quiz').defaultRandom().primaryKey().notNull(),
-  id_module: uuid('id_module')
+  id_user: uuid('id_user')
     .notNull()
-    .references(() => modules.id_module, { onDelete: 'cascade' }),
-  title: varchar('title', { length: 128 }).notNull(),
+    .references(() => users.id_user, { onDelete: 'cascade' }),
+  id_roadmapItems: uuid('id_roadmapItems')
+    .notNull()
+    .references(() => roadmapItems.id_item, { onDelete: 'cascade' }),
+  question: text('question').notNull(),
+  opsi_a: text('opsi_a').notNull(),
+  opsi_b: text('opsi_b').notNull(),
+  opsi_c: text('opsi_c').notNull(),
+  opsi_d: text('opsi_d').notNull(),
+  correct_answer: varchar('correct_answer', { length: 1 }).notNull(),
   created_at: timestamp('created_at', { withTimezone: true })
     .defaultNow()
     .notNull(),
 });
 
 export const quizzesRelations = relations(quizzes, ({ one, many }) => ({
-  module: one(modules, {
-    fields: [quizzes.id_module],
+  roadmapItems: one(modules, {
+    fields: [quizzes.id_roadmapItems],
     references: [modules.id_module],
   }),
   questions: many(quizQuestions),
@@ -400,10 +409,12 @@ export const quizzesRelations = relations(quizzes, ({ one, many }) => ({
 }));
 
 export const quizQuestions = pgTable('quiz_questions', {
-  id_question: uuid('id_question').defaultRandom().primaryKey().notNull(),
   id_quiz: uuid('id_quiz')
     .notNull()
     .references(() => quizzes.id_quiz, { onDelete: 'cascade' }),
+  id_user: uuid('id_user')
+    .notNull()
+    .references(() => users.id_user, { onDelete: 'cascade' }),
   pertanyaan: text('pertanyaan').notNull(),
   opsi_a: text('opsi_a').notNull(),
   opsi_b: text('opsi_b').notNull(),
@@ -416,6 +427,10 @@ export const quizQuestionsRelations = relations(quizQuestions, ({ one }) => ({
   quiz: one(quizzes, {
     fields: [quizQuestions.id_quiz],
     references: [quizzes.id_quiz],
+  }),
+  user: one(users, {
+    fields: [quizQuestions.id_user],
+    references: [users.id_user],
   }),
 }));
 
