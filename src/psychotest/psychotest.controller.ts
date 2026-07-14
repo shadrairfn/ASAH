@@ -19,4 +19,11 @@ export class PsychotestController {
         const userId = req.user['id_user'];
         return this.psychotestService.submitPsychotest(userId, body);
     }
+
+    @Post('/retake')
+    @UseGuards(AuthGuard('jwt'))
+    async retakePsychotest(@Req() req) {
+        const userId = req.user['id_user'];
+        return this.psychotestService.retakePsychotest(userId);
+    }
 }

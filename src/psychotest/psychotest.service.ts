@@ -1,15 +1,32 @@
 import { Injectable, Inject } from '@nestjs/common';
 import {
+  careerRecommendations,
   psychotestResults,
   questionPsychotest,
+  roadmaps,
   userQuestion,
 } from 'src/db/schema';
-import { eq, sql, inArray } from 'drizzle-orm';
-import { match } from 'assert';
+import { and, eq, sql, inArray } from 'drizzle-orm';
 
 @Injectable()
 export class PsychotestService {
   constructor(@Inject('DRIZZLE') private readonly db) {}
+
+  async retakePsychotest(id_user: string) {
+    await this.db.delete(userQuestion).where(eq(userQuestion.id_user, id_user));
+    await this.db
+      .delete(careerRecommendations)
+      .where(eq(careerRecommendations.id_user, id_user));
+    await this.db.delete(roadmaps).where(eq(roadmaps.id_user, id_user));
+    await this.db
+      .delete(psychotestResults)
+      .where(eq(psychotestResults.id_user, id_user));
+
+    return {
+      success: true,
+      message: 'Data psikotes lama dibersihkan. User dapat mengulang psikotes.',
+    };
+  }
   
   async getQuestions(id_user: string) {
     const types = [
@@ -47,6 +64,8 @@ export class PsychotestService {
 
     // 2. Cek jika ada soal yang ditemukan sebelum insert
     if (allQuestions.length > 0) {
+      await this.db.delete(userQuestion).where(eq(userQuestion.id_user, id_user));
+
       // 3. Siapkan data untuk dimasukkan ke tabel userQuestion
       const insertData = allQuestions.map((q, index) => {
         // Kembalikan objek secara eksplisit
@@ -111,6 +130,16 @@ export class PsychotestService {
 
   async submitPsychotest(id_user: string, payload: { user_answers: any[] }) {
     const answersInput = payload.user_answers || payload;
+    const answerIds = answersInput
+      .map((answer) => answer.id_user_question)
+      .filter(Boolean);
+
+    if (!answerIds.length) {
+      return {
+        success: false,
+        message: 'Tidak ada jawaban yang dikirim.',
+      };
+    }
 
     console.log('Received answers:', answersInput);
 
@@ -135,7 +164,12 @@ export class PsychotestService {
         id_question: userQuestion.id_question,
       })
       .from(userQuestion)
-      .where(eq(userQuestion.id_user, id_user));
+      .where(
+        and(
+          eq(userQuestion.id_user, id_user),
+          inArray(userQuestion.id_user_question, answerIds),
+        ),
+      );
       
     console.log('Question User from DB:', questionUser);
     console.log('Total questions:', questionUser.length);

@@ -1,4 +1,4 @@
-import { Controller, Body, Param, UploadedFile, Get, Patch, Req, Post, UseInterceptors, UseGuards, Query } from '@nestjs/common';
+import { Controller, Body, Delete, UploadedFile, Get, Patch, Req, Post, UseInterceptors, UseGuards, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
@@ -13,17 +13,24 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':me')
+  @Get('/by-email')
   async findByEmail(@Query('email') email: string) {
     return this.usersService.findByEmail(email);
   }
 
 
-  @Get('/:me')
+  @Get('/me')
   @UseGuards(AuthGuard('jwt'))
   async findById(@Req() req) {
     const userId = req.user['id_user'];
     return this.usersService.findById(userId);
+  }
+
+  @Patch('/me')
+  @UseGuards(AuthGuard('jwt'))
+  async updateCurrentUser(@Body() body: any, @Req() req) {
+    const userId = req.user['id_user'];
+    return this.usersService.updateUser(userId, body);
   }
 
   @Patch('/update')
@@ -51,7 +58,14 @@ export class UsersController {
   @Post('/delete')
   @UseGuards(AuthGuard('jwt'))
   async deleteUser(@Req() req) {
-    const userId = req.user['sub'];
+    const userId = req.user['id_user'];
+    return this.usersService.deleteUser(userId);
+  }
+
+  @Delete('/me')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteCurrentUser(@Req() req) {
+    const userId = req.user['id_user'];
     return this.usersService.deleteUser(userId);
   }
 

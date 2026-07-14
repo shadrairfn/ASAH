@@ -9,23 +9,51 @@ dotenv.config();
 @Injectable()
 export class UsersService {
   constructor(@Inject('DRIZZLE') private readonly db) {}
-  
-  async updateUser(id_user: string, data: UpdateUserDto) {
-    console.log("DATA MASUK:", data);
 
-    await this.db
-      .update(users)
-      .set(data)
-      .where(eq(users.id_user, id_user))
-      .returning();
-
-    const updatedUser = await this.db
-    .select({
+  private userSelect() {
+    return {
       id_user: users.id_user,
       email: users.email,
       name: users.name,
       image: users.image,
-    })
+      birth_date: users.birth_date,
+      gender_type: users.gender_type,
+      role: users.role,
+      created_at: users.created_at,
+      updated_at: users.updated_at,
+    };
+  }
+
+  private normalizeUpdatePayload(data: UpdateUserDto) {
+    const payload = data as Record<string, any>;
+    const nextData: Record<string, any> = {};
+
+    if (typeof payload.name === 'string') nextData.name = payload.name.trim();
+    if (typeof payload.image === 'string') nextData.image = payload.image.trim() || null;
+    if (payload.birth_date !== undefined) nextData.birth_date = payload.birth_date || null;
+    if (
+      payload.gender_type === 'male' ||
+      payload.gender_type === 'female' ||
+      payload.gender_type === 'other' ||
+      payload.gender_type === null
+    ) {
+      nextData.gender_type = payload.gender_type;
+    }
+
+    return nextData;
+  }
+  
+  async updateUser(id_user: string, data: UpdateUserDto) {
+    const nextData = this.normalizeUpdatePayload(data);
+
+    await this.db
+      .update(users)
+      .set(nextData)
+      .where(eq(users.id_user, id_user))
+      .returning();
+
+    const updatedUser = await this.db
+    .select(this.userSelect())
     .from(users)
     .where(eq(users.id_user, id_user))
     .limit(1);
@@ -38,12 +66,7 @@ export class UsersService {
   }
 
   async findAll() {
-    const user = await this.db.select({
-      id_user: users.id_user,
-      email: users.email,
-      name: users.name,
-      image: users.image,
-    })
+    const user = await this.db.select(this.userSelect())
     .from(users);
 
     return {
@@ -55,12 +78,7 @@ export class UsersService {
 
   async findById(id_user: string) {
     const user = await this.db
-    .select({
-      id_user: users.id_user,
-      email: users.email,
-      name: users.name,
-      image: users.image,
-    })
+    .select(this.userSelect())
     .from(users)
     .where(eq(users.id_user, id_user))
     .limit(1);
@@ -74,12 +92,7 @@ export class UsersService {
 
   async findByEmail(@Query('email') email: string) {
     const user = await this.db
-    .select({
-      id_user: users.id_user,
-      email: users.email,
-      name: users.name,
-      image: users.image,
-    })
+    .select(this.userSelect())
     .from(users)
     .where(eq(users.email, email))
     .limit(1);
