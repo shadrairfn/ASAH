@@ -26,7 +26,27 @@ export class AuthService {
     let payload;
 
     try {
-      const { tokens } = await this.googleClient.getToken(code);
+      console.log('Exchanging code for token with native fetch...');
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          code: code,
+          client_id: process.env.GOOGLE_CLIENT_ID!,
+          client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+          redirect_uri: 'postmessage',
+          grant_type: 'authorization_code',
+        }),
+      });
+      
+      const tokenData = await tokenResponse.json();
+      
+      if (!tokenResponse.ok) {
+        console.error('TOKEN ERROR FROM GOOGLE:', tokenData);
+        throw new BadRequestException(`Google API Error: ${tokenData.error_description || tokenData.error}`);
+      }
+
+      const tokens = { id_token: tokenData.id_token };
       
       const ticket = await this.googleClient.verifyIdToken({
         idToken: tokens.id_token!, 

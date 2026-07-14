@@ -37,6 +37,7 @@ export class RoadmapService {
       })
       .from(careerRecommendations)
       .where(eq(careerRecommendations.id_user, id_user))
+      .orderBy(desc(careerRecommendations.created_at))
       .limit(1);
 
     // Cek jika data tidak ditemukan
@@ -48,11 +49,21 @@ export class RoadmapService {
       };
     }
 
-    const rawOptions = recommendation[0].options_career;
+    const rawOptions = recommendation[0].options_career ?? [];
 
     // 2. Ambil ID saja dari array (index genap: 0, 2, 4)
     // Asumsi format array: [id1, score1, id2, score2, id3, score3]
-    const targetIds = [rawOptions[0], rawOptions[2], rawOptions[4]];
+    const targetIds = [rawOptions[0], rawOptions[2], rawOptions[4]].filter(
+      (id): id is string => Boolean(id),
+    );
+
+    if (targetIds.length === 0) {
+      return {
+        success: false,
+        message: 'Rekomendasi karier kosong. Pastikan tabel careers sudah berisi data vektor.',
+        data: [],
+      };
+    }
 
     // 3. Ambil detail career dari tabel careers berdasarkan ID yang didapat
     const careerDetails = await this.db

@@ -12,14 +12,7 @@ import {
   real,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-
-// TODO: sesuaikan dengan helper vector yang sudah kamu pakai
-// misal: import { vector } from "pgvector/drizzle-orm";
-import { vector, jsonb } from 'drizzle-orm/pg-core'; // contoh saja
-
-/* ==========================
-   ENUMS
-========================== */
+import { vector, jsonb } from 'drizzle-orm/pg-core';
 
 export const genderEnum = pgEnum('gender_type', ['male', 'female', 'other']);
 
@@ -84,10 +77,6 @@ export const typeQuestion = pgEnum('type_question', [
 ]);
 
 export const scoringType = pgEnum('scoring_type', ['normal', 'reverse']);
-
-/* ==========================
-   USERS
-========================== */
 
 export const users = pgTable('users', {
   id_user: uuid('id_user').defaultRandom().primaryKey().notNull(),

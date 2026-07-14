@@ -1,11 +1,9 @@
 import {
+  BadRequestException,
   Injectable,
-  InternalServerErrorException,
   Inject,
-  Param
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import {
   psychotestResults,
   careers,
@@ -14,11 +12,33 @@ import {
   roadmapItems,
   quizzes,
 } from 'src/db/schema';
-import { cosineDistance, eq, sql, ilike, like, and, asc } from 'drizzle-orm';
+import {
+  cosineDistance,
+  eq,
+  sql,
+  ilike,
+  and,
+  asc,
+  desc,
+  isNotNull,
+} from 'drizzle-orm';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string) {
+  let timer: ReturnType<typeof setTimeout>;
+
+  const timeout = new Promise<T>((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(`${label} timed out after ${ms}ms`)),
+      ms,
+    );
+  });
+
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
 
 function processDataRoadmap(input: string): string[] {
   // 1. Split Awal: Membagi string pada setiap kemunculan pola Nomor. Spasi
@@ -64,50 +84,87 @@ export interface RoadmapPhase {
   modules: RoadmapModule[];
 }
 
+type OpenAIResponsesPayload = {
+  output_text?: string;
+  output?: Array<{
+    content?: Array<{
+      text?: string;
+      type?: string;
+    }>;
+  }>;
+  error?: {
+    message?: string;
+  };
+};
+
 @Injectable()
 export class LlmService {
-  private genAI: GoogleGenerativeAI;
-  private modelRoadmap: GenerativeModel;
-  private modelMapping: GenerativeModel;
-  private modelEmbedding: GenerativeModel;
+  private readonly openAIModel: string;
+  private readonly openAIBaseUrl = 'https://api.openai.com/v1';
 
   constructor(
     private configService: ConfigService,
     @Inject('DRIZZLE') private readonly db,
   ) {
-    const apiKey = process.env.GEMINI_API_KEY!;
-    const roadmapModel = process.env.ROADMAP_MODEL!;
-    const mappingModel = process.env.MAPPING_CAREER_MODEL!;
-
-    this.genAI = new GoogleGenerativeAI(apiKey);
-
-    this.modelRoadmap = this.genAI.getGenerativeModel({
-      model: roadmapModel,
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 1000000000,
-      },
-    });
-
-    this.modelMapping = this.genAI.getGenerativeModel({
-      model: mappingModel,
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 1000000,
-      },
-    });
-
-    this.modelEmbedding = this.genAI.getGenerativeModel({
-      model: 'text-embedding-004',
-    });
+    this.openAIModel = process.env.OPENAI_MODEL || 'gpt-4.1';
   }
 
   getModelRoadmap() {
-    return this.modelRoadmap;
+    return this.openAIModel;
   }
 
   getModelMapping() {
-    return this.modelMapping;
+    return this.openAIModel;
+  }
+
+  private async callOpenAIText(
+    instructions: string,
+    input: string,
+    maxOutputTokens = 2048,
+    timeoutMs = 30000,
+  ): Promise<string> {
+    const apiKey = process.env.OPENAI_API_KEY;
+
+    if (!apiKey) {
+      throw new Error('OPENAI_API_KEY belum tersedia di environment.');
+    }
+
+    const request = fetch(`${this.openAIBaseUrl}/responses`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: this.openAIModel,
+        instructions,
+        input,
+        max_output_tokens: maxOutputTokens,
+      }),
+    });
+
+    const response = await withTimeout(request, timeoutMs, 'OpenAI response');
+    const data = (await response.json().catch(() => ({}))) as OpenAIResponsesPayload;
+
+    if (!response.ok) {
+      throw new Error(
+        data.error?.message || `OpenAI API error: ${response.status}`,
+      );
+    }
+
+    const directText = data.output_text?.trim();
+    if (directText) return directText;
+
+    const nestedText = data.output
+      ?.flatMap((item) => item.content ?? [])
+      .map((content) => content.text)
+      .filter(Boolean)
+      .join('\n')
+      .trim();
+
+    if (nestedText) return nestedText;
+
+    throw new Error('OpenAI response tidak berisi output teks.');
   }
 
   async careerRecomendation(id_user: string) {
@@ -135,23 +192,29 @@ export class LlmService {
         similarity: sql<number>`1 - (${cosineDistance(careers.vectorized, userVector)})`,
       })
       .from(careers)
+      .where(isNotNull(careers.vectorized))
       .orderBy(cosineDistance(careers.vectorized, userVector))
       .limit(3);
 
-    let option_career: string[] = ['['];
+    if (!recommendedCareers.length) {
+      throw new BadRequestException(
+        'Data karier belum tersedia atau belum memiliki vektor rekomendasi.',
+      );
+    }
 
-    recommendedCareers.map((career, index) => {
-      const split = [career.id_career, career.similarity];
-
-      option_career.push(split[0], split[1]);
-    });
-
-    option_career.shift();
+    const option_career = recommendedCareers.flatMap((career) => [
+      career.id_career,
+      String(career.similarity ?? 0),
+    ]);
 
     const careerData = {
       id_user: id_user,
       options_career: option_career,
     };
+
+    await this.db
+      .delete(careerRecommendations)
+      .where(eq(careerRecommendations.id_user, id_user));
 
     await this.db.insert(careerRecommendations).values(careerData);
 
@@ -177,11 +240,12 @@ export class LlmService {
       throw new Error('Career not found');
     }
 
-    // 2. Siapkan Prompt
-    // PERUBAHAN: Prompt disesuaikan untuk meminta struktur PHASE -> ITEM
+    const careerName = userCareer[0].nama_karir;
+    const careerDescription = userCareer[0].deskripsi;
+
     const prompt = `
       Bertindaklah sebagai Senior Technical Mentor.
-      Buatkan roadmap pembelajaran teknis untuk peran: "${userCareer[0].nama_karir}" (Deskripsi: ${userCareer[0].deskripsi}).
+      Buatkan roadmap pembelajaran teknis untuk peran: "${careerName}" (Deskripsi: ${careerDescription}).
 
       Instruksi Struktur:
       Bagi roadmap menjadi 4 Phase (Fase) logis dari basic ke expert.
@@ -204,25 +268,43 @@ export class LlmService {
       - Gunakan Bahasa Indonesia.
     `;
 
-    // 3. Panggil AI Model
-    const result = await this.modelMapping.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    let processedRoadmap: RoadmapPhase[];
 
-    console.log('--- RAW AI RESPONSE ---');
-    console.log(text);
+    try {
+      const text = await this.callOpenAIText(
+        'Anda adalah Senior Technical Mentor. Buat output persis sesuai format yang diminta user, tanpa pembuka atau penutup.',
+        prompt,
+        4096,
+        20000,
+      );
 
-    // 4. Proses Parsing (String -> Array of Phases)
-    const processedRoadmap = this.processDataRoadmap(text);
+      console.log('--- RAW AI RESPONSE ---');
+      console.log(text);
+
+      processedRoadmap = this.processDataRoadmap(text);
+
+      if (
+        processedRoadmap.length === 0 ||
+        processedRoadmap.every((phase) => phase.modules.length === 0)
+      ) {
+        throw new Error('AI roadmap response tidak sesuai format.');
+      }
+    } catch (error) {
+      console.error('Roadmap AI generation failed, using fallback:', error);
+      processedRoadmap = this.buildFallbackRoadmap(
+        careerName,
+        careerDescription,
+      );
+    }
 
     console.log('--- PROCESSED DATA ---');
     console.log(JSON.stringify(processedRoadmap, null, 2));
 
-    // 5. Simpan ke DB
+    await this.db.delete(roadmaps).where(eq(roadmaps.id_user, id_user));
+
     await this.db.insert(roadmaps).values({
       id_user: id_user,
       id_career: id_career,
-      // Pastikan kolom DB tipe json/jsonb
       roadmapPath: processedRoadmap,
     });
 
@@ -290,6 +372,107 @@ export class LlmService {
     return result;
   }
 
+  private buildFallbackRoadmap(
+    careerName: string,
+    careerDescription?: string | null,
+  ): RoadmapPhase[] {
+    return [
+      {
+        phase: 'Phase 1: Fondasi Peran',
+        modules: [
+          {
+            id: 1,
+            title: `Pahami Ruang Lingkup ${careerName}`,
+            details: ['tanggung jawab utama', 'alur kerja', 'standar industri'],
+          },
+          {
+            id: 2,
+            title: 'Kuasai Dasar Teknis',
+            details: ['konsep dasar', 'tools utama', 'praktik sederhana'],
+          },
+        ],
+      },
+      {
+        phase: 'Phase 2: Praktik Terarah',
+        modules: [
+          {
+            id: 1,
+            title: 'Bangun Proyek Mini',
+            details: ['studi kasus', 'workflow end-to-end', 'dokumentasi'],
+          },
+          {
+            id: 2,
+            title: 'Latih Problem Solving',
+            details: ['analisis masalah', 'prioritas solusi', 'evaluasi hasil'],
+          },
+        ],
+      },
+      {
+        phase: 'Phase 3: Portofolio dan Kolaborasi',
+        modules: [
+          {
+            id: 1,
+            title: 'Susun Portofolio',
+            details: ['narasi proyek', 'hasil terukur', 'presentasi karya'],
+          },
+          {
+            id: 2,
+            title: 'Simulasikan Kerja Tim',
+            details: ['komunikasi', 'review', 'iterasi'],
+          },
+        ],
+      },
+      {
+        phase: 'Phase 4: Kesiapan Karier',
+        modules: [
+          {
+            id: 1,
+            title: 'Persiapkan Interview',
+            details: ['pertanyaan teknis', 'cerita pengalaman', 'refleksi'],
+          },
+          {
+            id: 2,
+            title: 'Rancang Rencana 30 Hari',
+            details: ['target belajar', 'jadwal praktik', 'metrik kemajuan'],
+          },
+        ],
+      },
+    ].map((phase) => ({
+      ...phase,
+      modules: phase.modules.map((module) => ({
+        ...module,
+        details:
+          careerDescription && module.id === 1
+            ? [...module.details, careerDescription.slice(0, 80)]
+            : module.details,
+      })),
+    }));
+  }
+
+  private buildFallbackMaterial(
+    careerName: string,
+    phaseName: string,
+    module: RoadmapModule,
+  ): string {
+    const details = module.details.map((detail) => `- ${detail}`).join('\n');
+
+    return `# ${module.title}
+
+## 1. Konsep Inti
+Materi ini membantu kamu memahami bagian penting dari jalur ${careerName} pada ${phaseName}. Fokus utamanya adalah mengenali konteks kerja, melatih kebiasaan belajar yang rapi, dan mengubah konsep menjadi praktik kecil yang bisa dievaluasi.
+
+## 2. Poin yang Perlu Dikuasai
+${details}
+
+## 3. Studi Kasus
+Bayangkan kamu diminta menyelesaikan tugas kecil yang relevan dengan ${careerName}. Mulailah dari memahami masalah, tentukan output yang diharapkan, kerjakan versi sederhana, lalu dokumentasikan keputusan yang kamu ambil.
+
+## 4. Kesalahan Umum
+- Belajar terlalu banyak teori tanpa membuat hasil praktik.
+- Tidak mencatat proses, sehingga sulit mengevaluasi perkembangan.
+`;
+  }
+
   async generateContent(id_user: string) {
     const roadmapRecord = await this.db
       .select({
@@ -300,7 +483,12 @@ export class LlmService {
       .from(roadmaps)
       .innerJoin(careers, eq(roadmaps.id_career, careers.id_career))
       .where(eq(roadmaps.id_user, id_user))
+      .orderBy(desc(roadmaps.created_at))
       .limit(1);
+
+    if (!roadmapRecord.length) {
+      throw new Error('Roadmap user belum tersedia.');
+    }
 
     const currentRoadmap = roadmapRecord[0].roadmap;
     const careerName = roadmapRecord[0].career_name;
@@ -310,6 +498,10 @@ export class LlmService {
     const fullRoadmap = currentRoadmap.roadmapPath as unknown as RoadmapPhase[];
 
     console.log(roadmapRecord[0].roadmap.id_roadmap);
+
+    await this.db
+      .delete(roadmapItems)
+      .where(eq(roadmapItems.id_roadmap, currentRoadmap.id_roadmap));
 
     for (let i = 0; i < fullRoadmap.length; i++) {
       const phase = fullRoadmap[i];
@@ -353,29 +545,31 @@ export class LlmService {
 
         console.log(`PROMPT (${module.title}): ...Sending...`);
 
-        // 1. Generate Materi
-        const result = await this.modelMapping.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
+        let text: string;
 
-        // 2. Vectorize / Embedding
-        const textToEmbed = `Topik: ${module.title}\nIsi Materi: ${text}`;
-        const embeddingResult =
-          await this.modelEmbedding.embedContent(textToEmbed);
-        const vector = embeddingResult.embedding.values;
+        try {
+          text = await this.callOpenAIText(
+            'Anda adalah instruktur teknis senior. Tulis materi dalam Markdown bahasa Indonesia sesuai struktur yang diminta, tanpa kalimat pembuka.',
+            prompt,
+            4096,
+            30000,
+          );
+        } catch (error) {
+          console.error('Content AI generation failed, using fallback:', error);
+          text = this.buildFallbackMaterial(careerName, phase.phase, module);
+        }
 
-        // 3. Simpan ke Database
-        await this.db.insert(roadmapItems).values({
+        const insertData = {
           id_user: id_user,
-          id_roadmap: roadmapRecord[0].roadmap.id_roadmap,
+          id_roadmap: currentRoadmap.id_roadmap,
           phase: phase.phase,
           judul: module.title,
-          module: module.details,
           materi: text,
-          vectorize: vector,
-        });
+        };
 
-        console.log(`[OK] Saved & Vectorized: ${module.title}`);
+        await this.db.insert(roadmapItems).values(insertData);
+
+        console.log(`[OK] Saved: ${module.title}`);
 
         await sleep(1000);
       }
@@ -433,56 +627,55 @@ export class LlmService {
 
   async chatWithRoadmap(id_user: string, userMessage: string) {
     try {
-      const embeddingResult =
-        await this.modelEmbedding.embedContent(userMessage);
-      const queryVector = embeddingResult.embedding.values;
-
       const relevantMaterials = await this.db
         .select({
           judul: roadmapItems.judul,
           materi: roadmapItems.materi,
-          similarity: sql<number>`1 - (${cosineDistance(roadmapItems.vectorize, queryVector)})`,
         })
         .from(roadmapItems)
         .where(eq(roadmapItems.id_user, id_user))
-        .orderBy(cosineDistance(roadmapItems.vectorize, queryVector))
-        .limit(3);
-      let contextString = '';
+        .orderBy(desc(roadmapItems.created_at))
+        .limit(6);
 
-      if (relevantMaterials.length > 0) {
-        contextString = relevantMaterials
-          .map((item) => `Topik: ${item.judul}\nIsi Materi: ${item.materi}`)
-          .join('\n\n---\n\n');
+      if (relevantMaterials.length === 0) {
+        return {
+          reply:
+            'Materi roadmap kamu belum tersedia. Coba tunggu proses generate selesai, lalu kirim pertanyaan lagi.',
+          sources: [],
+        };
       }
+
+      const contextString = relevantMaterials
+        .map((item) => `Topik: ${item.judul}\nIsi Materi: ${item.materi}`)
+        .join('\n\n---\n\n');
 
       console.log('Context Found:', relevantMaterials.length, 'items');
 
-      const systemPrompt = `
-        Anda adalah Asisten Belajar AI (ASAH Assistant).
-        Tugas Anda adalah menjawab pertanyaan user BERDASARKAN materi yang telah dipelajari user di bawah ini.
-        
-        INSTRUKSI:
-        1. Gunakan HANYA informasi dari "KONTEKS MATERI" untuk menjawab.
-        2. Jika jawaban tidak ada di konteks, katakan "Maaf, informasi tersebut tidak ada dalam materi roadmap Anda saat ini." atau berikan jawaban umum tapi beri disclaimer.
-        3. Jawab dengan ringkas, ramah, dan memotivasi.
+      const reply = await this.callOpenAIText(
+        `Anda adalah Asisten Belajar AI ASAH.
+Jawab pertanyaan user hanya berdasarkan KONTEKS MATERI.
+Jika konteks tidak cukup, katakan bahwa informasi tersebut belum ada di materi roadmap saat ini, lalu beri saran belajar umum secara singkat.
+Jawab ringkas, ramah, dan memotivasi dalam bahasa Indonesia.`,
+        `KONTEKS MATERI:
+${contextString}
 
-        KONTEKS MATERI (DARI DATABASE):
-        ${contextString}
-
-        ----------------
-        Pertanyaan User: ${userMessage}
-      `;
-
-      const result = await this.modelMapping.generateContent(systemPrompt);
-      const response = await result.response;
+PERTANYAAN USER:
+${userMessage}`,
+        1200,
+        20000,
+      );
 
       return {
-        reply: response.text(),
+        reply,
         sources: relevantMaterials.map((m) => m.judul),
       };
     } catch (error) {
       console.error('Error RAG Chat:', error);
-      throw new Error('Gagal memproses chat dengan materi.');
+      return {
+        reply:
+          'Maaf, chat materi sedang tidak bisa diproses. Coba ulang sebentar lagi.',
+        sources: [],
+      };
     }
   }
 
@@ -524,11 +717,12 @@ export class LlmService {
     JANGAN gunakan format Markdown seperti \`\`\`json. Hanya JSON mentah (raw JSON).
     `;
 
-    const result = await this.modelMapping.generateContent(prompt);
-    const response = await result.response;
-
-    const cleanJson = response
-      .text()
+    const cleanJson = (await this.callOpenAIText(
+      'Buat output hanya berupa JSON mentah yang valid. Jangan gunakan Markdown.',
+      prompt,
+      2048,
+      20000,
+    ))
       .replace(/```json|```/g, '')
       .trim();
 

@@ -15,8 +15,8 @@ export class PsychotestController {
 
     @Post('/submit')
     @UseGuards(AuthGuard('jwt'))
-    async submitAptitude(@Req() req) {
+    async submitAptitude(@Req() req, @Body() body: { user_answers: any[] }) {
         const userId = req.user['id_user'];
-        return this.psychotestService.submitPsychotest(userId, req.body);
+        return this.psychotestService.submitPsychotest(userId, body);
     }
 }

@@ -28,7 +28,7 @@ export class PsychotestService {
     // 1. Ambil soal secara acak
     const queries = types.map((type) =>
       this.db
-        .select({
+        .select({ 
           id_question: questionPsychotest.id_question,
           type_question: questionPsychotest.type_question,
           question: questionPsychotest.question,

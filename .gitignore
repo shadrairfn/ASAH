@@ -16,7 +16,7 @@ lerna-debug.log*
 .DS_Store
 
 /firebase
-
+express-git-demo/
 # Tests
 /coverage
 /.nyc_output
