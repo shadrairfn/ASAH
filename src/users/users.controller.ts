@@ -1,20 +1,41 @@
-import { Controller, Body, Delete, UploadedFile, Get, Patch, Req, Post, UseInterceptors, UseGuards, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
 import { UploadService } from 'src/upload/upload.service';
 
- @Controller('users')
+@Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService, private readonly uploadService: UploadService) {}
 
   @Get('/')
-  async findAll() {
-    return this.usersService.findAll();
+  @UseGuards(AuthGuard('jwt'))
+  async findAll(@Req() req) {
+    const userId = req.user['id_user'];
+    return this.usersService.findById(userId);
   }
 
   @Get('/by-email')
-  async findByEmail(@Query('email') email: string) {
+  @UseGuards(AuthGuard('jwt'))
+  async findByEmail(@Query('email') email: string, @Req() req) {
+    if (email !== req.user['email']) {
+      throw new ForbiddenException('Cannot query another user profile.');
+    }
+
     return this.usersService.findByEmail(email);
   }
 
@@ -77,7 +98,12 @@ export class UsersController {
   }
 
   @Post('/:id_user')
-  async generateNewToken(@Req() req) {
-    return this.usersService.generateNewToken(req.params.id_user, req.body);
+  @UseGuards(AuthGuard('jwt'))
+  async generateNewToken(@Param('id_user') idUser: string, @Req() req) {
+    if (idUser !== req.user['id_user']) {
+      throw new ForbiddenException('Cannot generate token for another user.');
+    }
+
+    return this.usersService.generateNewToken(req.user['id_user'], req.user['email']);
   }
 }

@@ -116,9 +116,6 @@ export class RoadmapService {
 
     const selectedCareer = careerData[0];
 
-    console.log(selectedCareer);
-    
-
     const userRecord = await this.db
       .update(careerRecommendations)
       .set({

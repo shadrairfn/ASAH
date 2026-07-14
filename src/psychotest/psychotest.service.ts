@@ -141,8 +141,6 @@ export class PsychotestService {
       };
     }
 
-    console.log('Received answers:', answersInput);
-
     let scoreNumeric = 0;
     let scoreSpatial = 0;
     let scorePerceptual = 0;
@@ -171,9 +169,6 @@ export class PsychotestService {
         ),
       );
       
-    console.log('Question User from DB:', questionUser);
-    console.log('Total questions:', questionUser.length);
-
     // Ambil semua id_question untuk query ke questionPsychotest
     const questionIds = questionUser.map(q => q.id_question);
     
@@ -185,8 +180,6 @@ export class PsychotestService {
       })
       .from(questionPsychotest)
       .where(inArray(questionPsychotest.id_question, questionIds));
-
-    console.log('Question Details:', questionDetails);
 
     // Process setiap jawaban
     questionUser.forEach((dbQ) => {
@@ -202,8 +195,6 @@ export class PsychotestService {
           qd => qd.id_question === dbQ.id_question
         );
         const scoringType = questionDetail?.scoring_type || 'normal';
-
-        console.log(`Processing: ${type}, answer: ${matchAnswer.answer}, correct: ${dbQ.correct_answer}, scoring: ${scoringType}`);
 
         // Cek apakah tipe soal termasuk Aptitude
         if (type === 'Numeric') {
@@ -252,22 +243,7 @@ export class PsychotestService {
             scoreNeuroticism += parseFloat(matchAnswer.answer) || 0;
           }
         }
-      } else {
-        console.log(`No answer found for id_user_question: ${dbQ.id_user_question}`);
       }
-    });
-
-    console.log('Raw Scores:', {
-      scoreNumeric,
-      scoreSpatial,
-      scorePerceptual,
-      scoreAbstract,
-      scoreVerbal,
-      scoreOpeness,
-      scoreConscientiousness,
-      scoreExtraversion,
-      scoreAgreeableness,
-      scoreNeuroticism,
     });
 
     // Hitung average (dibagi 3 karena setiap tipe ada 3 soal)
@@ -310,8 +286,6 @@ export class PsychotestService {
       verbal: avgVer,
       vectorize_score: vectorizeScore,
     };
-
-    console.log('Final Result:', resultUser);
 
     await this.db
       .insert(psychotestResults)

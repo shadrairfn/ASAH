@@ -5,7 +5,22 @@ import { JwtService } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 import { OAuth2Client } from 'google-auth-library'; 
 
-dotenv.config();
+dotenv.config({ quiet: true });
+
+function getRequiredEnv(name: string) {
+  const value = process.env[name];
+
+  if (!value) {
+    throw new Error(`${name} must be configured.`);
+  }
+
+  return value;
+}
+
+function sanitizeUser(user: typeof users.$inferSelect) {
+  const { refresh_token, ...safeUser } = user;
+  return safeUser;
+}
 
 @Injectable()
 export class AuthService {
@@ -16,8 +31,8 @@ export class AuthService {
     private readonly jwtService: JwtService 
   ) {
     this.googleClient = new OAuth2Client(
-      process.env.GOOGLE_CLIENT_ID!, 
-      process.env.GOOGLE_CLIENT_SECRET!,
+      getRequiredEnv('GOOGLE_CLIENT_ID'), 
+      getRequiredEnv('GOOGLE_CLIENT_SECRET'),
       'postmessage' 
     );
   }
@@ -26,14 +41,13 @@ export class AuthService {
     let payload;
 
     try {
-      console.log('Exchanging code for token with native fetch...');
       const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
           code: code,
-          client_id: process.env.GOOGLE_CLIENT_ID!,
-          client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+          client_id: getRequiredEnv('GOOGLE_CLIENT_ID'),
+          client_secret: getRequiredEnv('GOOGLE_CLIENT_SECRET'),
           redirect_uri: 'postmessage',
           grant_type: 'authorization_code',
         }),
@@ -42,7 +56,7 @@ export class AuthService {
       const tokenData = await tokenResponse.json();
       
       if (!tokenResponse.ok) {
-        console.error('TOKEN ERROR FROM GOOGLE:', tokenData);
+        console.error('Google token exchange failed:', tokenData.error);
         throw new BadRequestException(`Google API Error: ${tokenData.error_description || tokenData.error}`);
       }
 
@@ -50,7 +64,7 @@ export class AuthService {
       
       const ticket = await this.googleClient.verifyIdToken({
         idToken: tokens.id_token!, 
-        audience: process.env.GOOGLE_CLIENT_ID!,
+        audience: getRequiredEnv('GOOGLE_CLIENT_ID'),
       });
       
       payload = ticket.getPayload();
@@ -80,6 +94,7 @@ export class AuthService {
         .limit(1);
       
       let finalUser = existingUser[0];
+      let isNewUser = false;
 
       if (!finalUser) {
         const newUserPayload = {
@@ -90,6 +105,7 @@ export class AuthService {
 
         const insertedUsers = await this.db.insert(users).values(newUserPayload).returning();
         finalUser = insertedUsers[0]; 
+        isNewUser = true;
       }
 
       const jwtPayload = { 
@@ -98,12 +114,12 @@ export class AuthService {
       };
 
       const accessToken = this.jwtService.sign(jwtPayload, { 
-        secret: process.env.JWT_SECRET!, 
+        secret: getRequiredEnv('JWT_SECRET'), 
         expiresIn: '1d' 
       });
 
       const refreshToken = this.jwtService.sign(jwtPayload, { 
-        secret: process.env.JWT_REFRESH_SECRET!, 
+        secret: getRequiredEnv('JWT_REFRESH_SECRET'), 
         expiresIn: '7d' 
       });
 
@@ -115,13 +131,14 @@ export class AuthService {
 
       return {
         message: 'Login success',
-        user: finalUser,
+        user: sanitizeUser(finalUser),
+        isNewUser,
         accessToken,
-        refresh_token: refreshToken,
+        refreshToken,
       };
 
     } catch (error) {
-      console.error('Database Error:', error);
+      console.error('Login persistence failed:', error instanceof Error ? error.message : error);
       throw new InternalServerErrorException('Database transaction failed');
     }
   }

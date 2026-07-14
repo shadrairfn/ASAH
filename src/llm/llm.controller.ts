@@ -70,11 +70,6 @@ export class LlmController {
     // Node.js akan melanjutkan proses ini di server meskipun response sudah dikirim ke user
     this.llmService
       .generateContent(userId)
-      .then(() =>
-        console.log(
-          `[BACKGROUND] Selesai generate konten untuk user ${userId}`,
-        ),
-      )
       .catch((err) => console.error(`[BACKGROUND] Error: ${err.message}`));
 
     // 3. Langsung return response sukses ke Frontend

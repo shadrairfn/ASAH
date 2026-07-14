@@ -23,7 +23,7 @@ import {
   isNotNull,
 } from 'drizzle-orm';
 import * as dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -278,9 +278,6 @@ export class LlmService {
         20000,
       );
 
-      console.log('--- RAW AI RESPONSE ---');
-      console.log(text);
-
       processedRoadmap = this.processDataRoadmap(text);
 
       if (
@@ -290,15 +287,15 @@ export class LlmService {
         throw new Error('AI roadmap response tidak sesuai format.');
       }
     } catch (error) {
-      console.error('Roadmap AI generation failed, using fallback:', error);
+      console.error(
+        'Roadmap AI generation failed, using fallback:',
+        error instanceof Error ? error.message : error,
+      );
       processedRoadmap = this.buildFallbackRoadmap(
         careerName,
         careerDescription,
       );
     }
-
-    console.log('--- PROCESSED DATA ---');
-    console.log(JSON.stringify(processedRoadmap, null, 2));
 
     await this.db.delete(roadmaps).where(eq(roadmaps.id_user, id_user));
 
@@ -493,11 +490,7 @@ Bayangkan kamu diminta menyelesaikan tugas kecil yang relevan dengan ${careerNam
     const currentRoadmap = roadmapRecord[0].roadmap;
     const careerName = roadmapRecord[0].career_name;
 
-    console.log('Nama Karir:', careerName);
-
     const fullRoadmap = currentRoadmap.roadmapPath as unknown as RoadmapPhase[];
-
-    console.log(roadmapRecord[0].roadmap.id_roadmap);
 
     await this.db
       .delete(roadmapItems)
@@ -543,8 +536,6 @@ Bayangkan kamu diminta menyelesaikan tugas kecil yang relevan dengan ${careerNam
           - Output: HANYA materi saja, jangan ada kalimat pembuka seperti "Berikut adalah materi yang Anda minta".
           `;
 
-        console.log(`PROMPT (${module.title}): ...Sending...`);
-
         let text: string;
 
         try {
@@ -555,7 +546,10 @@ Bayangkan kamu diminta menyelesaikan tugas kecil yang relevan dengan ${careerNam
             30000,
           );
         } catch (error) {
-          console.error('Content AI generation failed, using fallback:', error);
+          console.error(
+            'Content AI generation failed, using fallback:',
+            error instanceof Error ? error.message : error,
+          );
           text = this.buildFallbackMaterial(careerName, phase.phase, module);
         }
 
@@ -568,8 +562,6 @@ Bayangkan kamu diminta menyelesaikan tugas kecil yang relevan dengan ${careerNam
         };
 
         await this.db.insert(roadmapItems).values(insertData);
-
-        console.log(`[OK] Saved: ${module.title}`);
 
         await sleep(1000);
       }
@@ -649,8 +641,6 @@ Bayangkan kamu diminta menyelesaikan tugas kecil yang relevan dengan ${careerNam
         .map((item) => `Topik: ${item.judul}\nIsi Materi: ${item.materi}`)
         .join('\n\n---\n\n');
 
-      console.log('Context Found:', relevantMaterials.length, 'items');
-
       const reply = await this.callOpenAIText(
         `Anda adalah Asisten Belajar AI ASAH.
 Jawab pertanyaan user hanya berdasarkan KONTEKS MATERI.
@@ -670,7 +660,10 @@ ${userMessage}`,
         sources: relevantMaterials.map((m) => m.judul),
       };
     } catch (error) {
-      console.error('Error RAG Chat:', error);
+      console.error(
+        'Error RAG Chat:',
+        error instanceof Error ? error.message : error,
+      );
       return {
         reply:
           'Maaf, chat materi sedang tidak bisa diproses. Coba ulang sebentar lagi.',

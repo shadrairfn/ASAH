@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RoadmapController } from './roadmap.controller';
+import { RoadmapService } from './roadmap.service';
 
 describe('RoadmapController', () => {
   let controller: RoadmapController;
@@ -7,6 +8,7 @@ describe('RoadmapController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [RoadmapController],
+      providers: [{ provide: RoadmapService, useValue: {} }],
     }).compile();
 
     controller = module.get<RoadmapController>(RoadmapController);

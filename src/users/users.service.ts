@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { eq } from "drizzle-orm";
 import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ quiet: true });
 
 @Injectable()
 export class UsersService {
